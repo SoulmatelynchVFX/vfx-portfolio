@@ -1,0 +1,28 @@
+{
+  "name": "vfx-portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "个人 VFX / 三维渲染作品集网站",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "gen:media": "powershell -ExecutionPolicy Bypass -File scripts/gen-placeholders.ps1",
+    "test:e2e": "node scripts/check-lightbox.mjs",
+    "shot": "node scripts/capture.mjs"
+  },
+  "dependencies": {
+    "next": "^14.2.35",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.16.0",
+    "@types/react": "^18.3.8",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.13",
+    "typescript": "^5.6.2"
+  }
+}

@@ -3,7 +3,7 @@
  */
 export const site = {
   /** 显示在首页正中央的名字 */
-  name: "YOUR NAME",
+  name: "Seal Wang",
   /** 头衔 */
   role: "VFX Artist",
   /** 副标语（技能关键词） */
@@ -13,5 +13,5 @@ export const site = {
   /** 背景视频的封面图（首帧之前显示） */
   showreelPoster: "/posters/hero.jpg",
   /** 页脚联系邮箱 */
-  email: "hello@example.com",
+  email: "soulmatelynch@gmail.com",
 } as const;

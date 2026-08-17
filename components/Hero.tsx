@@ -37,7 +37,7 @@ export default function Hero() {
 
       {/* 2. 文字蒙版层：黑底 multiply，视频只透过标题字形显示 */}
       <div className="absolute inset-0 z-10 flex items-center justify-center bg-black mix-blend-multiply">
-        <h1 className="whitespace-nowrap px-6 text-center font-normal tracking-tight text-white text-[clamp(2.25rem,4.5vw,4rem)]">
+        <h1 className="whitespace-nowrap px-6 text-center font-normal tracking-tight text-white text-[clamp(6.75rem,13.5vw,12rem)]">
           {site.name}
         </h1>
       </div>

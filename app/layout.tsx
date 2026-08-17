@@ -4,7 +4,6 @@ import { site } from "../data/site";
 import { Analytics } from "@vercel/analytics/next";
 import { MotionConfig } from "framer-motion";
 import SmoothScroll from "../components/SmoothScroll";
-import CustomCursor from "../components/CustomCursor";
 
 export const metadata: Metadata = {
   title: `${site.name} — VFX Artist`,
@@ -30,7 +29,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen">
         <MotionConfig reducedMotion="user">
           <SmoothScroll>{children}</SmoothScroll>
-          <CustomCursor />
         </MotionConfig>
         <Analytics />
       </body>

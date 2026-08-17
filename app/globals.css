@@ -38,11 +38,24 @@ html.lenis body {
   pointer-events: none;
 }
 
-/* ---- 隐藏原生光标（仅桌面精细指针设备），由 CustomCursor 接管 ---- */
-@media (hover: hover) and (pointer: fine) {
-  * {
-    cursor: none !important;
-  }
+/* ---- 自定义 Hornet 光标（PNG，热点坐标取自原 .cur 目录）---- */
+html,
+body {
+  cursor: url("/cursors/hornet-cursor-32.png") 1 1, auto;
+}
+
+a,
+button,
+[role="button"],
+[data-cursor="play"],
+[data-cursor="link"] {
+  cursor: url("/cursors/hornet-pointer-32.png") 9 1, pointer;
+}
+
+/* 播放器沉浸模式：空闲时隐藏光标 */
+.cursor-none,
+.cursor-none * {
+  cursor: none !important;
 }
 
 /* 细窄暗色滚动条 */

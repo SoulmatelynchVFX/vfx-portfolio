@@ -60,13 +60,6 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
     };
   }, []);
 
-  // 控件显隐 → 同步控制全局定制光标的显隐
-  useEffect(() => {
-    window.dispatchEvent(
-      new CustomEvent(controlsVisible ? "cursor-show" : "cursor-hide")
-    );
-  }, [controlsVisible]);
-
   // 打开/关闭：锁定滚动 + 键盘导航 + 暂停/恢复 Lenis
   useEffect(() => {
     const lenis = getLenis();
@@ -86,17 +79,18 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
       document.body.style.overflow = previousOverflow;
       lenis?.start();
       window.removeEventListener("keydown", onKeyDown);
-      window.dispatchEvent(new CustomEvent("cursor-show"));
     };
   }, [onClose, onNavigate, prev, next, hasMultiple]);
 
   const chrome = `transition-opacity duration-500 ${
     controlsVisible ? "opacity-100" : "pointer-events-none opacity-0"
   }`;
+  // 控件隐藏时光标一并隐藏（CSS .cursor-none 覆盖整个 Lightbox）
+  const cursorClass = controlsVisible ? "" : "cursor-none";
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black p-4 sm:p-8"
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black p-4 sm:p-8 ${cursorClass}`}
       role="dialog"
       aria-modal="true"
       aria-label={`作品播放：${project.title}`}

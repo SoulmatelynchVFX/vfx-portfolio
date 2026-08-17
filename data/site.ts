@@ -8,7 +8,9 @@ export const site = {
   role: "VFX Artist",
   /** 副标语（技能关键词） */
   tagline: "Houdini · UE5 · Nuke",
-  /** 首页全屏背景视频（Showreel 混剪） */
+  /** 首页「叠底」视频（金翅大鹏，作为文字蒙版的填充层） */
+  heroVideo: "/videos/golden-wing.mp4",
+  /** 首页全屏背景视频（Showreel 混剪，暂未使用） */
   showreelVideo: "/videos/hero.mp4",
   /** 背景视频的封面图（首帧之前显示） */
   showreelPoster: "/posters/hero.jpg",

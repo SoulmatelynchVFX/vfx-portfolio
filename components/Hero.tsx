@@ -15,9 +15,8 @@ const item: Variants = {
 
 /**
  * 首屏 Hero：
- * - 底层视频定位到标题区域（稍往下、稍放大），适配文字大小
- * - 黑底 multiply 蒙版让视频透过「Seal Wang」字形显示
- * - 上层再叠一层半透明白字，保证视频暗处字形依旧可辨识
+ * - 底层视频全屏铺满
+ * - 标题不再做蒙版，仅以 5% 透明度的白字叠加在视频上（视频为主体）
  */
 export default function Hero() {
   return (
@@ -34,16 +33,9 @@ export default function Hero() {
         aria-hidden="true"
       />
 
-      {/* 2. 文字蒙版层：黑底 multiply，视频只透过标题字形显示 */}
-      <div className="absolute inset-0 z-10 flex items-center justify-center bg-black mix-blend-multiply">
-        <h1 className="whitespace-nowrap px-6 text-center text-8xl font-normal tracking-tight text-white">
-          {site.name}
-        </h1>
-      </div>
-
-      {/* 3. 上层半透明白字：保证字形在视频暗处依旧清晰可辨 */}
+      {/* 2. 标题：非蒙版，仅极淡白字叠加（5% 透明度） */}
       <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
-        <h1 className="whitespace-nowrap px-6 text-center text-8xl font-normal tracking-tight text-white/20">
+        <h1 className="whitespace-nowrap px-6 text-center text-8xl font-normal tracking-tight text-white/5">
           {site.name}
         </h1>
       </div>

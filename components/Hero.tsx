@@ -23,17 +23,19 @@ const item: Variants = {
 export default function Hero() {
   return (
     <section className="relative h-svh min-h-[560px] w-full overflow-hidden bg-[#0a0a0a]">
-      {/* 1. 底层视频（叠底）：静音 / 自动播放 / 循环 */}
-      <video
-        className="absolute inset-0 h-full w-full object-cover"
-        src={site.heroVideo}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        aria-hidden="true"
-      />
+      {/* 1. 底层视频：定位到标题区域、适配文字大小（不再全屏铺满） */}
+      <div className="absolute left-1/2 top-1/2 z-0 h-[200px] w-[600px] -translate-x-1/2 -translate-y-1/2 overflow-hidden">
+        <video
+          className="h-full w-full object-cover"
+          src={site.heroVideo}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+        />
+      </div>
 
       {/* 2. 文字蒙版层：黑底 multiply，视频只透过标题字形显示 */}
       <div className="absolute inset-0 z-10 flex items-center justify-center bg-black mix-blend-multiply">

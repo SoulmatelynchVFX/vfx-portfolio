@@ -5,7 +5,7 @@ import { site } from "../data/site";
 
 export default function Home() {
   return (
-    <main>
+    <main className="select-none">
       <Hero />
 
       {/* 作品画廊 */}

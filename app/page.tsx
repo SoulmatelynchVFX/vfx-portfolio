@@ -37,6 +37,7 @@ export default function Home() {
           </p>
           <a
             href={`mailto:${site.email}`}
+            data-cursor="link"
             className="text-xs text-white/60 underline-offset-4 transition hover:text-white hover:underline"
           >
             {site.email}

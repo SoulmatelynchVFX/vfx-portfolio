@@ -6,8 +6,9 @@
   color-scheme: dark;
 }
 
-html {
-  scroll-behavior: smooth;
+html,
+body {
+  height: auto;
 }
 
 body {
@@ -17,6 +18,31 @@ body {
 ::selection {
   background: rgba(255, 255, 255, 0.92);
   color: #000;
+}
+
+/* ---- Lenis 平滑滚动推荐样式 ---- */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* ---- 隐藏原生光标（仅桌面精细指针设备），由 CustomCursor 接管 ---- */
+@media (hover: hover) and (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
 }
 
 /* 细窄暗色滚动条 */

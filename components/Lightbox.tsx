@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Project } from "../types";
 import { categories } from "../data/projects";
+import { getLenis } from "../lib/lenis";
+import VideoPlayer from "./VideoPlayer";
 
 interface LightboxProps {
   projects: Project[];
@@ -12,9 +14,9 @@ interface LightboxProps {
 }
 
 /**
- * 沉浸式播放弹窗（Lightbox）：
- * 打开时锁定页面滚动，支持 ESC 关闭、←/→ 切换作品；
- * 播放器下方预留技术栈说明区。
+ * 沉浸式全屏播放器（Lightbox）：
+ * 纯黑背景 + 自定义播放器；鼠标 2 秒无动作时平滑隐藏全部控件与光标，
+ * 再次移动立即淡入恢复；支持 ESC 关闭、←/→ 切换作品。
  */
 export default function Lightbox({ projects, index, onClose, onNavigate }: LightboxProps) {
   const project = projects[index];
@@ -25,9 +27,52 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
   const hasMultiple = projects.length > 1;
   const closeRef = useRef<HTMLButtonElement>(null);
 
+  const [controlsVisible, setControlsVisible] = useState(true);
+  const playingRef = useRef(true);
+  const idleTimer = useRef<number | undefined>(undefined);
+
+  // 播放状态：暂停时保持控件可见，恢复播放后继续参与空闲计时
+  const handlePlayingChange = useCallback((playing: boolean) => {
+    playingRef.current = playing;
+    if (!playing) {
+      setControlsVisible(true);
+      if (idleTimer.current) window.clearTimeout(idleTimer.current);
+    }
+  }, []);
+
+  // 空闲计时：任何鼠标移动/点击/按键都会重置 2 秒倒计时
   useEffect(() => {
+    const showControls = () => {
+      setControlsVisible(true);
+      if (idleTimer.current) window.clearTimeout(idleTimer.current);
+      idleTimer.current = window.setTimeout(() => {
+        if (playingRef.current) setControlsVisible(false);
+      }, 2000);
+    };
+
+    const events: (keyof WindowEventMap)[] = ["pointermove", "pointerdown", "keydown"];
+    events.forEach((ev) => window.addEventListener(ev, showControls));
+    showControls();
+
+    return () => {
+      events.forEach((ev) => window.removeEventListener(ev, showControls));
+      if (idleTimer.current) window.clearTimeout(idleTimer.current);
+    };
+  }, []);
+
+  // 控件显隐 → 同步控制全局定制光标的显隐
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent(controlsVisible ? "cursor-show" : "cursor-hide")
+    );
+  }, [controlsVisible]);
+
+  // 打开/关闭：锁定滚动 + 键盘导航 + 暂停/恢复 Lenis
+  useEffect(() => {
+    const lenis = getLenis();
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    lenis?.stop();
     closeRef.current?.focus();
 
     const onKeyDown = (event: KeyboardEvent) => {
@@ -39,26 +84,26 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
 
     return () => {
       document.body.style.overflow = previousOverflow;
+      lenis?.start();
       window.removeEventListener("keydown", onKeyDown);
+      window.dispatchEvent(new CustomEvent("cursor-show"));
     };
   }, [onClose, onNavigate, prev, next, hasMultiple]);
 
+  const chrome = `transition-opacity duration-500 ${
+    controlsVisible ? "opacity-100" : "pointer-events-none opacity-0"
+  }`;
+
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black p-4 sm:p-8"
       role="dialog"
       aria-modal="true"
       aria-label={`作品播放：${project.title}`}
     >
-      {/* 点击背景关闭 */}
-      <div
-        className="absolute inset-0 animate-fade-in bg-black/90 backdrop-blur-sm"
-        onClick={onClose}
-      />
-
-      <div className="relative z-10 w-full max-w-5xl animate-lightbox-in">
+      <div className="relative z-10 w-full max-w-6xl animate-lightbox-in">
         {/* 顶栏：分类 · 年份 + 序号 + 关闭 */}
-        <div className="mb-4 flex items-center justify-between gap-4">
+        <div className={`mb-4 flex items-center justify-between gap-4 ${chrome}`}>
           <p className="truncate text-[11px] uppercase tracking-[0.3em] text-white/50">
             {categoryLabel} · {project.year}
           </p>
@@ -72,6 +117,7 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
               ref={closeRef}
               type="button"
               onClick={onClose}
+              data-cursor="link"
               aria-label="关闭"
               className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/80 transition hover:border-white hover:bg-white hover:text-black"
             >
@@ -91,17 +137,14 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
           </div>
         </div>
 
-        {/* 播放器（key 变化时重新挂载，实现切换作品自动播放） */}
-        <div className="relative aspect-video w-full overflow-hidden bg-black ring-1 ring-white/10">
-          <video
+        {/* 播放器 + 左右切换 */}
+        <div className="relative">
+          <VideoPlayer
             key={project.id}
             src={project.video}
             poster={project.poster}
-            controls
-            autoPlay
-            playsInline
-            preload="auto"
-            className="h-full w-full object-contain"
+            controlsVisible={controlsVisible}
+            onPlayingChange={handlePlayingChange}
           />
 
           {hasMultiple && (
@@ -110,7 +153,7 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
                 type="button"
                 onClick={() => onNavigate(prev)}
                 aria-label="上一个作品"
-                className="absolute left-3 top-1/2 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white/80 backdrop-blur-sm transition hover:bg-white hover:text-black md:flex"
+                className={`absolute left-3 top-1/2 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white/80 backdrop-blur-sm transition hover:bg-white hover:text-black md:flex ${chrome}`}
               >
                 <svg
                   width="16"
@@ -130,7 +173,7 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
                 type="button"
                 onClick={() => onNavigate(next)}
                 aria-label="下一个作品"
-                className="absolute right-3 top-1/2 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white/80 backdrop-blur-sm transition hover:bg-white hover:text-black md:flex"
+                className={`absolute right-3 top-1/2 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white/80 backdrop-blur-sm transition hover:bg-white hover:text-black md:flex ${chrome}`}
               >
                 <svg
                   width="16"
@@ -150,8 +193,8 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
           )}
         </div>
 
-        {/* 下方信息区：标题 / 说明 / 技术栈（这里就是预留的填写空间） */}
-        <div className="mt-6">
+        {/* 下方信息区：标题 / 说明 / 技术栈 */}
+        <div className={`mt-6 ${chrome}`}>
           <div className="flex flex-wrap items-baseline justify-between gap-3">
             <h3 className="text-2xl font-light tracking-tight text-white">{project.title}</h3>
             {hasMultiple && (

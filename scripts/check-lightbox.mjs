@@ -98,7 +98,7 @@ async function main() {
   await evaluate(`document.querySelector('button[aria-label^="播放作品"]').click()`);
   await delay(600);
   check("lightbox dialog open", await evaluate(`!!document.querySelector('[role="dialog"]')`));
-  check("video mounted with controls", await evaluate(`(() => { const v = document.querySelector('[role="dialog"] video'); return !!v && v.controls && v.src.endsWith('particle-storm.mp4'); })()`));
+  check("video mounted (custom player)", await evaluate(`(() => { const v = document.querySelector('[role="dialog"] video'); return !!v && !v.controls && v.src.endsWith('particle-storm.mp4') && !!document.querySelector('[role="dialog"] button[aria-label="暂停"]'); })()`));
   check("tech stack chips visible", (await evaluate(`document.querySelectorAll('[role="dialog"] [class*="rounded-full"]').length`)) >= 4);
 
   // 3. keyboard: ArrowRight -> next project

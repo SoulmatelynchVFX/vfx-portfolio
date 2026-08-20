@@ -114,7 +114,7 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
                 onClick={onClose}
                 data-cursor="link"
                 aria-label="关闭"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/80 transition hover:border-white hover:bg-white hover:text-black"
+                className="glass-button h-9 w-9 rounded-full"
               >
                 <svg
                   width="14"
@@ -149,7 +149,7 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
                 type="button"
                 onClick={() => onNavigate(prev)}
                 aria-label="上一个作品"
-                className={`absolute left-3 top-1/2 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white/80 backdrop-blur-sm transition hover:bg-white hover:text-black md:flex ${chrome}`}
+                className={`glass-button absolute left-3 top-1/2 hidden h-10 w-10 -translate-y-1/2 rounded-full md:flex ${chrome}`}
               >
                 <svg
                   width="16"
@@ -169,7 +169,7 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
                 type="button"
                 onClick={() => onNavigate(next)}
                 aria-label="下一个作品"
-                className={`absolute right-3 top-1/2 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white/80 backdrop-blur-sm transition hover:bg-white hover:text-black md:flex ${chrome}`}
+                className={`glass-button absolute right-3 top-1/2 hidden h-10 w-10 -translate-y-1/2 rounded-full md:flex ${chrome}`}
               >
                 <svg
                   width="16"
@@ -212,7 +212,7 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
               {project.techStack.map((tag) => (
                 <span
                   key={tag}
-                  className="rounded-full border border-white/15 px-3 py-1 text-xs text-white/70"
+                  className="glass-tag rounded-full px-3 py-1 text-xs text-white/80"
                 >
                   {tag}
                 </span>
@@ -226,14 +226,14 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
               <button
                 type="button"
                 onClick={() => onNavigate(prev)}
-                className="rounded-full border border-white/15 px-4 py-2 text-xs text-white/70 transition hover:border-white/40 hover:text-white"
+                className="glass-button rounded-full px-4 py-2 text-xs"
               >
                 ← 上一个
               </button>
               <button
                 type="button"
                 onClick={() => onNavigate(next)}
-                className="rounded-full border border-white/15 px-4 py-2 text-xs text-white/70 transition hover:border-white/40 hover:text-white"
+                className="glass-button rounded-full px-4 py-2 text-xs"
               >
                 下一个 →
               </button>

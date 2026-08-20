@@ -109,7 +109,7 @@ export default function VideoPlayer({
   const uiVisible = controlsVisible || !playing;
 
   return (
-    <div className="relative aspect-video w-full overflow-hidden bg-black ring-1 ring-white/10">
+    <div className="glass-player relative aspect-video w-full overflow-hidden rounded-[22px]">
       <video
         ref={videoRef}
         src={src}
@@ -130,22 +130,22 @@ export default function VideoPlayer({
           uiVisible && !playing ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       >
-        <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/25 backdrop-blur-md transition hover:bg-white hover:text-black">
+        <span className="glass-button h-16 w-16 rounded-full">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M8 5.5v13l11-6.5-11-6.5z" />
           </svg>
         </span>
       </button>
 
-      {/* 底部控制条 */}
+      {/* 底部玻璃控制条 */}
       <div
-        className={`absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/85 to-transparent px-4 pb-3 pt-10 transition-opacity duration-500 ${
+        className={`glass-control-bar absolute inset-x-3 bottom-3 z-10 rounded-2xl px-4 py-3 transition-opacity duration-500 ${
           uiVisible ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       >
         {/* 进度条（可点击 / 拖拽） */}
         <div
-          className="group relative mb-3 h-1 w-full cursor-pointer bg-white/20"
+          className="group relative mb-3 h-1.5 w-full cursor-pointer overflow-hidden rounded-full bg-white/20"
           onPointerDown={handleBarDown}
           onPointerMove={handleBarMove}
           onPointerUp={handleBarUp}
@@ -157,11 +157,11 @@ export default function VideoPlayer({
           aria-valuenow={Math.round(progress)}
         >
           <div
-            className="absolute left-0 top-0 h-full bg-white"
+            className="absolute left-0 top-0 h-full rounded-full bg-white"
             style={{ width: `${progress}%` }}
           />
           <div
-            className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white opacity-0 transition-opacity group-hover:opacity-100"
+            className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white opacity-0 shadow transition-opacity group-hover:opacity-100"
             style={{ left: `${progress}%` }}
           />
         </div>
@@ -172,14 +172,14 @@ export default function VideoPlayer({
             type="button"
             onClick={togglePlay}
             aria-label={playing ? "暂停" : "播放"}
-            className="text-white transition hover:text-white/70"
+            className="glass-button h-8 w-8 rounded-full"
           >
             {playing ? (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
               </svg>
             ) : (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M8 5.5v13l11-6.5-11-6.5z" />
               </svg>
             )}
@@ -195,11 +195,11 @@ export default function VideoPlayer({
             type="button"
             onClick={toggleMute}
             aria-label={muted ? "取消静音" : "静音"}
-            className="text-white transition hover:text-white/70"
+            className="glass-button h-8 w-8 rounded-full"
           >
             <svg
-              width="18"
-              height="18"
+              width="16"
+              height="16"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"

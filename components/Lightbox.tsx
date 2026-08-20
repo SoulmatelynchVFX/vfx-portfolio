@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { LiquidGlass } from "@persian-caesar/liquid-glass";
 import type { Project } from "../types";
 import { categories } from "../data/projects";
 import { getLenis } from "../lib/lenis";
@@ -96,40 +97,51 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
       aria-label={`作品播放：${project.title}`}
     >
       <div className="relative z-10 w-full max-w-6xl animate-lightbox-in">
-        {/* 顶栏：分类 · 年份 + 序号 + 关闭 */}
-        <div className={`mb-4 flex items-center justify-between gap-4 ${chrome}`}>
-          <p className="truncate text-[11px] uppercase tracking-[0.3em] text-white/50">
-            {categoryLabel} · {project.year}
-          </p>
-          <div className="flex shrink-0 items-center gap-5">
-            {hasMultiple && (
-              <span className="hidden text-[11px] tabular-nums text-white/40 sm:block">
-                {String(index + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
-              </span>
-            )}
-            <button
-              ref={closeRef}
-              type="button"
-              onClick={onClose}
-              data-cursor="link"
-              aria-label="关闭"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/80 transition hover:border-white hover:bg-white hover:text-black"
-            >
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                aria-hidden="true"
+        {/* 顶栏：分类 · 年份 + 序号 + 关闭（液态玻璃面板） */}
+        <LiquidGlass
+          borderRadius={22}
+          blur={0.4}
+          saturation={1.2}
+          displacementScale={1}
+          elasticity={0.6}
+          shadowIntensity={0.25}
+          className={`mb-4 ${chrome}`}
+          style={{ background: "rgba(255,255,255,0.07)", padding: "12px 18px" }}
+        >
+          <div className="flex items-center justify-between gap-4">
+            <p className="truncate text-[11px] uppercase tracking-[0.3em] text-white/50">
+              {categoryLabel} · {project.year}
+            </p>
+            <div className="flex shrink-0 items-center gap-5">
+              {hasMultiple && (
+                <span className="hidden text-[11px] tabular-nums text-white/40 sm:block">
+                  {String(index + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
+                </span>
+              )}
+              <button
+                ref={closeRef}
+                type="button"
+                onClick={onClose}
+                data-cursor="link"
+                aria-label="关闭"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/80 transition hover:border-white hover:bg-white hover:text-black"
               >
-                <path d="M18 6L6 18M6 6l12 12" />
-              </svg>
-            </button>
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  aria-hidden="true"
+                >
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
           </div>
-        </div>
+        </LiquidGlass>
 
         {/* 播放器 + 左右切换 */}
         <div className="relative">
@@ -187,8 +199,17 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
           )}
         </div>
 
-        {/* 下方信息区：标题 / 说明 / 技术栈 */}
-        <div className={`mt-6 ${chrome}`}>
+        {/* 下方信息区：标题 / 说明 / 技术栈（液态玻璃面板） */}
+        <LiquidGlass
+          borderRadius={22}
+          blur={0.4}
+          saturation={1.2}
+          displacementScale={1}
+          elasticity={0.6}
+          shadowIntensity={0.25}
+          className={`mt-6 ${chrome}`}
+          style={{ background: "rgba(255,255,255,0.07)", padding: "20px 24px" }}
+        >
           <div className="flex flex-wrap items-baseline justify-between gap-3">
             <h3 className="text-2xl font-light tracking-tight text-white">{project.title}</h3>
             {hasMultiple && (
@@ -237,7 +258,7 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
               </button>
             </div>
           )}
-        </div>
+        </LiquidGlass>
       </div>
     </div>
   );

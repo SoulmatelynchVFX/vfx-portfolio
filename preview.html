@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<title>Seal Wang · VFX — Liquid Glass Preview</title>
+<style>
+  /* ===== 取自项目 app/globals.css 的液态玻璃样式（数值一致） ===== */
+  :root { color-scheme: dark; --glass-hx: -1px; --glass-hy: -1px; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background:#0a0a0a; color:#fff; font-family:-apple-system,"SF Pro Display","SF Pro Text","Helvetica Neue","Segoe UI",system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+
+  /* ===== 自定义 Hornet 光标（与真实 globals.css 一致，相对路径双通） ===== */
+  html, body { cursor: url("public/cursors/hornet-cursor-32.png") 1 1, auto; }
+  a, button, [role="button"], [data-cursor="play"], [data-cursor="link"] {
+    cursor: url("public/cursors/hornet-pointer-32.png") 9 1, pointer;
+  }
+  .cursor-none, .cursor-none * { cursor: none !important; }
+
+  .font-ios { font-family:-apple-system,"SF Pro Display","SF Pro Text","Helvetica Neue","Segoe UI",system-ui,sans-serif; }
+
+  /* 玻璃高光描边（标签/头衔/标语） */
+  .liquid-text {
+    text-shadow:
+      0 1px 0 rgba(255,255,255,0.55),
+      0 -1px 0 rgba(0,0,0,0.25),
+      0 0 18px rgba(255,255,255,0.25),
+      0 2px 14px rgba(0,0,0,0.45);
+  }
+
+  /* 标题级液态玻璃：SVG 纯描边，字心完全透空；多层描边做方向性高光/阴影 */
+  .hero h1 { margin:0; font-weight:500; line-height:1; animation:titleIn 1.2s cubic-bezier(.16,1,.3,1) both; }
+  .stroke-title svg { width:min(92vw, 900px); height:auto; display:block; overflow:visible;
+    filter: drop-shadow(0 -1px 3px rgba(255,255,255,0.5)) drop-shadow(0 3px 7px rgba(0,0,0,0.55)); }
+  .stroke-title text { font-family:-apple-system,"SF Pro Display","SF Pro Text","Helvetica Neue","Segoe UI",system-ui,sans-serif; }
+
+  .liquid-title-glow::before {
+    content:""; position:absolute; inset:-12% -8%;
+    background:radial-gradient(60% 60% at 50% 50%, rgba(255,255,255,0.07), transparent 70%);
+    filter:blur(20px); z-index:-1; pointer-events:none;
+  }
+
+  /* ===== 布局与入场动画 ===== */
+  @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:none} }
+  @keyframes titleIn { from{opacity:0;transform:translateY(28px) scale(0.96)} to{opacity:1;transform:none} }
+  @keyframes scrollPulse { 0%,100%{opacity:.4} 50%{opacity:1} }
+
+  .hero { position:relative; height:100svh; min-height:560px; width:100%; overflow:hidden; background:#0a0a0a; }
+  .hero video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
+  .hero .scrim { position:absolute; inset:0; z-index:10; pointer-events:none;
+    background:linear-gradient(to bottom, rgba(0,0,0,.60), rgba(0,0,0,.30) 50%, rgba(0,0,0,.75)); }
+  .hero .title-wrap { position:absolute; inset:0; z-index:20; display:flex; align-items:center; justify-content:center; pointer-events:none; will-change:opacity,transform; }
+  .hero .label { position:absolute; left:50%; top:18%; transform:translateX(-50%); z-index:30; font-size:11px; letter-spacing:.5em; text-transform:uppercase; color:rgba(255,255,255,.70); animation:fadeUp .9s cubic-bezier(.16,1,.3,1) .3s both; }
+  .hero .meta { position:absolute; left:50%; bottom:16%; transform:translateX(-50%); z-index:30; text-align:center; display:flex; flex-direction:column; align-items:center; gap:14px; }
+  .hero .meta .role { font-size:13px; letter-spacing:.45em; text-transform:uppercase; color:rgba(255,255,255,.90); animation:fadeUp .9s cubic-bezier(.16,1,.3,1) .42s both; }
+  .hero .meta .tag { font-size:11px; letter-spacing:.3em; text-transform:uppercase; color:rgba(255,255,255,.55); animation:fadeUp .9s cubic-bezier(.16,1,.3,1) .54s both; }
+  .hero .scroll { position:absolute; left:50%; bottom:6%; transform:translateX(-50%); z-index:30; display:flex; flex-direction:column; align-items:center; gap:14px; color:rgba(255,255,255,.40); font-size:10px; letter-spacing:.4em; text-transform:uppercase; text-decoration:none; animation:fadeUp .8s ease 1.1s both; transition:color .25s; }
+  .hero .scroll:hover { color:#fff; }
+  .hero .scroll .bar { width:1px; height:36px; background:linear-gradient(to bottom, rgba(255,255,255,.7), transparent); animation:scrollPulse 2s ease-in-out infinite; }
+
+  /* ===== Works 区 ===== */
+  .section-pad { max-width:1100px; margin:0 auto; padding:64px 24px; opacity:0; transform:translateY(48px); transition:opacity .9s ease, transform .9s cubic-bezier(.16,1,.3,1); }
+  .section-pad.revealed { opacity:1; transform:none; }
+  .section-title { font-size:12px; letter-spacing:.4em; text-transform:uppercase; color:rgba(255,255,255,.5); margin-bottom:20px; }
+
+  /* 玻璃 FilterBar（等价于 @persian-caesar/liquid-glass） */
+  .glass {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.18);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.25);
+    border-radius: 16px;
+  }
+  .filterbar { display:inline-flex; flex-wrap:wrap; gap:6px; padding:8px; border-radius:999px; }
+  .filterbar button { border:0; background:transparent; color:rgba(255,255,255,.7); font-size:12px; letter-spacing:.04em; padding:8px 16px; border-radius:999px; transition:all .2s; font-family:inherit; }
+  .filterbar button.active { background:rgba(255,255,255,.14); color:#fff; }
+
+  /* 画廊卡片（等价于 ProjectCard.tsx：封面 + 悬停视频预览） */
+  .gallery { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:18px; margin-top:28px; }
+  .card { display:block; width:100%; text-align:left; background:transparent; border:0; padding:0; font-family:inherit; color:inherit; }
+  .card .thumb { position:relative; aspect-ratio:16/9; overflow:hidden; border-radius:14px; background:#101010; border:1px solid rgba(255,255,255,.10); transition:border-color .3s; }
+  .card:hover .thumb { border-color:rgba(255,255,255,.35); }
+  .card .poster, .card .hov { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .card .hov { opacity:0; transition:opacity .5s; }
+  .card:hover .hov { opacity:1; }
+  .card:hover .poster { opacity:0; transition:opacity .7s; }
+  .card .dur { position:absolute; right:8px; top:8px; background:rgba(0,0,0,.7); padding:2px 6px; border-radius:4px; font-size:10px; color:rgba(255,255,255,.85); z-index:2; }
+  .card .cap { display:flex; justify-content:space-between; gap:8px; margin-top:12px; }
+  .card .ct { font-size:14px; font-weight:500; color:#fff; }
+  .card .cy { font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.4); white-space:nowrap; }
+  .card .ccat { margin-top:4px; font-size:12px; color:rgba(255,255,255,.45); }
+
+  .empty { margin-top:40px; font-size:13px; color:rgba(255,255,255,.4); }
+
+  /* Lightbox（玻璃面板：顶栏 + 信息区，stage 内播放真实视频） */
+  .lightbox-backdrop { position:fixed; inset:0; z-index:50; background:rgba(0,0,0,.82); display:flex; align-items:center; justify-content:center; padding:24px; }
+  .lightbox { width:min(960px,100%); max-height:88vh; display:flex; flex-direction:column; padding:18px; gap:16px; }
+  .lightbox .stage { position:relative; border-radius:12px; overflow:hidden; aspect-ratio:16/9; background:#000; display:flex; align-items:center; justify-content:center; }
+  .lightbox .stage video { width:100%; height:100%; object-fit:contain; background:#000; }
+  .lightbox .topbar { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:10px 14px; border-radius:12px; }
+  .lightbox .topbar .cat { font-size:11px; letter-spacing:.3em; text-transform:uppercase; color:rgba(255,255,255,.6); }
+  .lightbox .topbar .right { display:flex; gap:8px; }
+  .lightbox .topbar .nav, .lightbox .topbar .close { width:36px; height:36px; border-radius:50%; border:1px solid rgba(255,255,255,.25); background:transparent; color:rgba(255,255,255,.85); font-size:15px; }
+  .lightbox .topbar .nav:hover, .lightbox .topbar .close:hover { background:rgba(255,255,255,.12); }
+  .lightbox .info { padding:12px 14px; border-radius:12px; }
+  .lightbox .info h3 { font-size:18px; font-weight:500; color:#fff; }
+  .lightbox .info p { margin-top:8px; font-size:13px; line-height:1.6; color:rgba(255,255,255,.6); }
+  .lightbox .info .tech { margin-top:10px; display:flex; flex-wrap:wrap; gap:8px; }
+  .lightbox .info .tech span { font-size:11px; letter-spacing:.05em; color:rgba(255,255,255,.7); padding:4px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.16); }
+</style>
+</head>
+<body>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <video id="bg" autoplay muted loop playsinline preload="auto"
+           src="public/videos/golden-wing.mp4" poster="public/posters/golden-wing.jpg"></video>
+    <div class="scrim"></div>
+
+    <div class="title-wrap liquid-title-glow">
+      <h1 class="font-ios stroke-title" aria-label="Seal Wang">
+        <svg class="title-svg" viewBox="0 0 800 130" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <text id="title-dark" x="400" y="65" text-anchor="middle" dominant-baseline="central" fill="none" stroke="rgba(0,0,0,0.6)" stroke-width="1.8" font-size="84" font-weight="500" letter-spacing="-0.02em">Seal Wang</text>
+          <text id="title-base" x="400" y="65" text-anchor="middle" dominant-baseline="central" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.1" font-size="84" font-weight="500" letter-spacing="-0.02em">Seal Wang</text>
+          <text id="title-light" x="400" y="65" text-anchor="middle" dominant-baseline="central" fill="none" stroke="rgba(255,255,255,0.98)" stroke-width="0.5" font-size="84" font-weight="500" letter-spacing="-0.02em">Seal Wang</text>
+        </svg>
+      </h1>
+    </div>
+
+    <div class="label font-ios liquid-text">Showreel — 2026</div>
+
+    <div class="meta">
+      <div class="role font-ios liquid-text">VFX / 3D Render Artist</div>
+      <div class="tag font-ios liquid-text">Cinematic · Stylized · Real-time</div>
+    </div>
+
+    <a class="scroll font-ios" href="#works" data-cursor="link" aria-label="向下滚动查看作品">
+      <span>Scroll</span><span class="bar"></span>
+    </a>
+  </section>
+
+  <!-- ============ Works ============ -->
+  <section class="section-pad" id="works">
+    <div class="section-title">Selected Works</div>
+    <div class="filterbar glass" id="filterbar"></div>
+    <div class="gallery" id="gallery"></div>
+    <div class="empty" id="empty" style="display:none">该分类下暂无作品。</div>
+  </section>
+
+  <!-- ============ Lightbox ============ -->
+  <div class="lightbox-backdrop" id="lb" style="display:none" onclick="if(event.target===this)closeLightbox()">
+    <div class="lightbox glass">
+      <div class="topbar glass">
+        <span class="cat" id="lb-cat">角色 · 2026</span>
+        <div class="right">
+          <button class="nav" onclick="navLightbox(-1)" aria-label="上一个">‹</button>
+          <button class="nav" onclick="navLightbox(1)" aria-label="下一个">›</button>
+          <button class="close" onclick="closeLightbox()" aria-label="关闭">✕</button>
+        </div>
+      </div>
+      <div class="stage">
+        <video id="lb-video" muted loop playsinline controls preload="metadata"></video>
+      </div>
+      <div class="info glass">
+        <h3 id="lb-title">—</h3>
+        <p id="lb-desc">—</p>
+        <div class="tech" id="lb-tech"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ===== 数据（与 data/projects.ts 一致） =====
+  const CATS = [
+    { id: "all", label: "全部作品" },
+    { id: "houdini", label: "Houdini 粒子与流体" },
+    { id: "ue5", label: "UE5 实时渲染" },
+    { id: "nuke", label: "Nuke 影视合成" },
+    { id: "render", label: "三维渲染" },
+  ];
+  const PROJECTS = [
+    { id:"particle-storm", title:"粒子风暴", category:"houdini", year:"2025", duration:"00:18", description:"由 Houdini POP 粒子系统驱动的万点星火，配合 VEX 编写的自定义风力与湍流场，捕捉爆裂瞬间的秩序与混沌。", tech:["Houdini POP Network","VEX 自定义场","Karma XPU","Nuke 分层合成"], video:"public/videos/particle-storm.mp4", poster:"public/posters/particle-storm.jpg" },
+    { id:"fluid-vessel", title:"流体容器", category:"houdini", year:"2025", duration:"00:24", description:"FLIP 流体在透明容器中的翻涌与回落，使用白水（Whitewater）辅助粒子补充细节，VDB 网格化后在 Karma 中渲染。", tech:["Houdini FLIP","Whitewater","VDB 网格化","Karma XPU"], video:"public/videos/fluid-vessel.mp4", poster:"public/posters/fluid-vessel.jpg" },
+    { id:"magma-dragon", title:"熔岩巨兽", category:"houdini", year:"2024", duration:"00:32", description:"Pyro 烟火与 FLIP 流体耦合的熔岩表面，通过自定义材质渐变模拟高温金属的流动质感。", tech:["Houdini Pyro","FLIP 耦合","Redshift","材质渐变"], video:"public/videos/magma-dragon.mp4", poster:"public/posters/magma-dragon.jpg" },
+    { id:"cyber-street", title:"赛博街区", category:"ue5", year:"2025", duration:"00:28", description:"UE5 中的霓虹雨夜街道，Lumen 全局光照与 Nanite 高模资产支撑的实时渲染场景。", tech:["Unreal Engine 5","Lumen","Nanite","Megascans 资产"], video:"public/videos/cyber-street.mp4", poster:"public/posters/cyber-street.jpg" },
+    { id:"neon-beacon", title:"霓虹信标", category:"ue5", year:"2024", duration:"00:22", description:"Niagara 粒子系统生成的悬浮光带与信号脉冲，在 Sequencer 中完成的镜头调度与后期调色。", tech:["UE5 Niagara","Sequencer","光线追踪反射","DaVinci 调色"], video:"public/videos/neon-beacon.mp4", poster:"public/posters/neon-beacon.jpg" },
+    { id:"stealth-jet", title:"隐形战机", category:"nuke", year:"2025", duration:"00:26", description:"实拍素材上的 CG 战机合成：镜头跟踪、阴影匹配与大气透视统一，使用 Deep 合成处理前景遮挡。", tech:["Nuke 跟踪","Deep 合成","Keylight 抠像","大气透视匹配"], video:"public/videos/stealth-jet.mp4", poster:"public/posters/stealth-jet.jpg" },
+    { id:"macro-world", title:"微观世界", category:"nuke", year:"2024", duration:"00:20", description:"显微摄影风格的微观生物群落，多通道 AOV 分层合成，辅以胶片颗粒与色差等电影化处理。", tech:["Nuke 多通道合成","AOV 分层","胶片颗粒","色差模拟"], video:"public/videos/macro-world.mp4", poster:"public/posters/macro-world.jpg" },
+    { id:"still-life", title:"静物之光", category:"render", year:"2025", duration:"00:15", description:"Octane 渲染的珠宝静物，聚焦金属与玻璃材质的折射、焦散表现与 HDRI 布光练习。", tech:["Cinema 4D","Octane Render","焦散","HDRI 布光"], video:"public/videos/still-life.mp4", poster:"public/posters/still-life.jpg" },
+  ];
+  const catLabel = (id) => (CATS.find(c => c.id === id) || {}).label || id;
+
+  // ===== 渲染 FilterBar =====
+  let activeCat = "all";
+  const filterbar = document.getElementById("filterbar");
+  filterbar.innerHTML = CATS.map(c =>
+    `<button data-cat="${c.id}" class="${c.id === "all" ? "active" : ""}">${c.label}</button>`
+  ).join("");
+  filterbar.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      filterbar.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeCat = btn.dataset.cat;
+      renderGallery();
+    });
+  });
+
+  // ===== 渲染画廊卡片（含悬停视频预览） =====
+  const gallery = document.getElementById("gallery");
+  const emptyEl = document.getElementById("empty");
+  function renderGallery() {
+    const list = activeCat === "all" ? PROJECTS : PROJECTS.filter(p => p.category === activeCat);
+    emptyEl.style.display = list.length ? "none" : "block";
+    gallery.innerHTML = list.map(p => `
+      <button class="card" data-id="${p.id}" data-cursor="play" aria-label="播放作品：${p.title}">
+        <div class="thumb">
+          <img class="poster" src="${p.poster}" alt="${p.title}" loading="lazy" />
+          <video class="hov" src="${p.video}" muted loop playsinline preload="metadata"></video>
+          <span class="dur">${p.duration}</span>
+        </div>
+        <div class="cap"><span class="ct">${p.title}</span><span class="cy">${p.year}</span></div>
+        <p class="ccat">${catLabel(p.category)}</p>
+      </button>`).join("");
+
+    gallery.querySelectorAll(".card").forEach(card => {
+      const vid = card.querySelector(".hov");
+      card.addEventListener("mouseenter", () => { try { vid.currentTime = 0; vid.play().catch(()=>{}); } catch(e){} });
+      card.addEventListener("mouseleave", () => { try { vid.pause(); vid.currentTime = 0; } catch(e){} });
+      card.addEventListener("click", () => openLightbox(card.dataset.id));
+    });
+  }
+  renderGallery();
+
+  // ===== Lightbox =====
+  const lb = document.getElementById("lb");
+  const lbVideo = document.getElementById("lb-video");
+  let lbIndex = 0;
+  function openLightbox(id) {
+    lbIndex = PROJECTS.findIndex(p => p.id === id);
+    if (lbIndex < 0) lbIndex = 0;
+    fillLightbox();
+    lb.style.display = "flex";
+  }
+  function fillLightbox() {
+    const p = PROJECTS[lbIndex];
+    document.getElementById("lb-cat").textContent = catLabel(p.category) + " · " + p.year;
+    document.getElementById("lb-title").textContent = p.title;
+    document.getElementById("lb-desc").textContent = p.description;
+    document.getElementById("lb-tech").innerHTML = p.tech.map(t => `<span>${t}</span>`).join("");
+    lbVideo.src = p.video;
+    lbVideo.play().catch(() => {});
+  }
+  function closeLightbox() { lb.style.display = "none"; try { lbVideo.pause(); } catch(e){} }
+  function navLightbox(d) { lbIndex = (lbIndex + d + PROJECTS.length) % PROJECTS.length; fillLightbox(); }
+
+  // ===== 背景视频：强制静音 + 循环（与 Hero.tsx 一致） =====
+  const v = document.getElementById("bg");
+  v.muted = true; v.loop = true;
+  (v.play && v.play().catch(()=>{}));
+  v.addEventListener("canplay", () => v.play().catch(()=>{}), { once:true });
+
+  // ===== 向下滚动提示：自定义缓动平滑滚动（不再直接弹页） =====
+  const scrollLink = document.querySelector('a[href="#works"]');
+  function smoothScrollTo(targetY, duration = 900) {
+    const startY = window.scrollY;
+    const diff = targetY - startY;
+    const start = performance.now();
+    function step(now) {
+      const t = Math.min(1, (now - start) / duration);
+      const e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; // easeInOutCubic
+      window.scrollTo(0, startY + diff * e);
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  if (scrollLink) {
+    scrollLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      const target = document.getElementById("works");
+      if (target) smoothScrollTo(target.offsetTop);
+    });
+  }
+
+  // ===== 滚动视差：Hero 标题随滚动淡出+上移，作品区入场 =====
+  const titleWrap = document.querySelector(".hero .title-wrap");
+  const works = document.getElementById("works");
+  function onScroll() {
+    const y = window.scrollY;
+    const vh = window.innerHeight || 1;
+    const p = Math.min(1, Math.max(0, y / vh));
+    if (titleWrap) {
+      titleWrap.style.opacity = (1 - p * 0.95).toFixed(3);
+      titleWrap.style.transform = `translateY(${(-p * 70).toFixed(1)}px) scale(${(1 - p * 0.06).toFixed(3)})`;
+    }
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  if ("IntersectionObserver" in window && works) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => { if (en.isIntersecting) works.classList.add("revealed"); });
+    }, { threshold: 0.12 });
+    io.observe(works);
+  } else if (works) {
+    works.classList.add("revealed");
+  }
+
+  // ===== 液态玻璃：采样背景视频亮区重心，驱动高光方向跟随画面（与 Hero.tsx 一致） =====
+  const canvas = document.createElement("canvas");
+  canvas.width = 24; canvas.height = 14;
+  const ctx = canvas.getContext("2d", { willReadFrequently:true });
+  const rootStyle = document.documentElement.style;
+  const titleDark = document.getElementById("title-dark");
+  const titleLight = document.getElementById("title-light");
+  const BASE_BX = 1.3, BASE_BY = 1.3; // 固定浮雕方向：光来自左上
+  let raf = 0, last = 0;
+  function sample(t){
+    raf = requestAnimationFrame(sample);
+    if (v.paused || v.ended) return;
+    if (t - last < 90) return;
+    last = t;
+    try {
+      ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
+      const { data } = ctx.getImageData(0,0,canvas.width,canvas.height);
+      const W = canvas.width, H = canvas.height;
+      let gx=0, gy=0, n=0;
+      for (let y=0;y<H;y++) for (let x=0;x<W;x++){
+        const i=(y*W+x)*4;
+        const lum=data[i]*0.3+data[i+1]*0.59+data[i+2]*0.11;
+        gx+=(x-W/2)*lum; gy+=(y-H/2)*lum; n++;
+      }
+      const gxN=gx/n, gyN=gy/n, mag=Math.hypot(gxN,gyN)||1;
+      const amp=Math.min(3, mag/1500);
+      const vhx = (gxN/mag)*amp*0.5, vhy = (gyN/mag)*amp*0.5; // 视频驱动的高光微动
+      rootStyle.setProperty("--glass-hx", vhx.toFixed(2)+"px");
+      rootStyle.setProperty("--glass-hy", vhy.toFixed(2)+"px");
+      const bx = BASE_BX + vhx, by = BASE_BY + vhy;
+      if (titleDark) titleDark.setAttribute("transform", `translate(${bx.toFixed(2)}, ${by.toFixed(2)})`);
+      if (titleLight) titleLight.setAttribute("transform", `translate(${(-bx).toFixed(2)}, ${(-by).toFixed(2)})`);
+    } catch(e){}
+  }
+  if (ctx) raf = requestAnimationFrame(sample);
+</script>
+</body>
+</html>

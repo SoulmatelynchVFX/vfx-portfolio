@@ -138,3 +138,81 @@ button,
     scroll-behavior: auto;
   }
 }
+
+/* ============================================================
+   液态玻璃（Liquid Glass）文字 — 借鉴 nikdelvin/liquid-glass
+   与 LogRocket 纯 CSS/SVG 还原 iOS 26 材质的思路。仅作用于
+   首屏 Hero，零运行时依赖、跨浏览器稳定。
+   ============================================================ */
+
+/* iOS 系统字体栈：优先 SF Pro，其它平台回退到系统无衬线 */
+.font-ios {
+  font-family: -apple-system, "SF Pro Display", "SF Pro Text",
+    "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+}
+
+/* 玻璃高光描边：内亮边 + 外柔影 + 整体光晕，模拟液态玻璃边缘反光。
+   不强设 color，由各元素自身透明度（text-white/...）决定填充，
+   从而保留标签 / 头衔 / 标语之间的层级差异；半透明填充 + 高亮描边
+   正是最接近 iOS 液态玻璃文字「透出底图、边缘发亮」的观感。 */
+.liquid-text {
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.55),
+    0 -1px 0 rgba(0, 0, 0, 0.25),
+    0 0 18px rgba(255, 255, 255, 0.25),
+    0 2px 14px rgba(0, 0, 0, 0.45);
+}
+
+/* 标题级：参考用户提供的「LIQUID」玻璃字效果——
+   内部极透、边缘锐利白描边 + 高光 / 阴影，呈现干净玻璃材质。
+   高光方向由 --glass-hx/--glass-hy 实时驱动（Hero 采样背景视频亮区），
+   使发光方向跟随视频画面移动（液态玻璃材质感）。保留当前 iOS/SF Pro 字体。 */
+/* 标题级液态玻璃：改用 SVG 三层描边浮雕（见 Hero.tsx），
+   此处只负责 SVG 容器的尺寸、字体与双投影。 */
+.stroke-title svg {
+  width: min(92vw, 900px);
+  height: auto;
+  display: block;
+  overflow: visible;
+  /* 双投影：上方一抹亮、下方一抹暗，让标题浮在视频之上 */
+  filter:
+    drop-shadow(0 -1px 3px rgba(255, 255, 255, 0.5))
+    drop-shadow(0 3px 7px rgba(0, 0, 0, 0.55));
+}
+.stroke-title text {
+  font-family: -apple-system, "SF Pro Display", "SF Pro Text",
+    "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+}
+
+/* 标题背后一圈柔和玻璃光晕，增强材质存在感（非死板面板） */
+  .liquid-title-glow::before {
+    content: "";
+    position: absolute;
+    inset: -16% -10%;
+    background: radial-gradient(
+      60% 60% at 50% 50%,
+      rgba(255, 255, 255, 0.1),
+      transparent 72%
+    );
+    filter: blur(26px);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* 进入视口时淡入上移（作品区入场，配合 Reveal 客户端组件） */
+  .reveal {
+    opacity: 0;
+    transform: translateY(48px);
+    transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.in-view {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }

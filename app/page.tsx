@@ -1,5 +1,6 @@
 import Hero from "../components/Hero";
 import Gallery from "../components/Gallery";
+import Reveal from "../components/Reveal";
 import { projects } from "../data/projects";
 import { site } from "../data/site";
 
@@ -9,10 +10,11 @@ export default function Home() {
       <Hero />
 
       {/* 作品画廊 */}
-      <section
-        id="works"
-        className="mx-auto max-w-7xl px-4 py-24 sm:px-6 md:py-32 lg:px-8"
-      >
+      <Reveal>
+        <section
+          id="works"
+          className="mx-auto max-w-7xl px-4 py-24 sm:px-6 md:py-32 lg:px-8"
+        >
         <header className="mb-12 flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-[11px] uppercase tracking-[0.4em] text-white/40">
@@ -28,7 +30,8 @@ export default function Home() {
         </header>
 
         <Gallery />
-      </section>
+        </section>
+      </Reveal>
 
       <footer className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-10 text-center sm:flex-row sm:px-6 sm:text-left lg:px-8">

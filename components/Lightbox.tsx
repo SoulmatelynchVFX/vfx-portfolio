@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { LiquidGlass } from "@persian-caesar/liquid-glass";
 import type { Project } from "../types";
 import { categories } from "../data/projects";
 import { getLenis } from "../lib/lenis";
@@ -98,16 +97,7 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
     >
       <div className="relative z-10 w-full max-w-6xl animate-lightbox-in">
         {/* 顶栏：分类 · 年份 + 序号 + 关闭（液态玻璃面板） */}
-        <LiquidGlass
-          borderRadius={22}
-          blur={0.4}
-          saturation={1.2}
-          displacementScale={1}
-          elasticity={0.6}
-          shadowIntensity={0.25}
-          className={`mb-4 ${chrome}`}
-          style={{ background: "rgba(255,255,255,0.07)", padding: "12px 18px" }}
-        >
+        <div className={`glass-panel mb-4 rounded-[22px] p-[12px_18px] ${chrome}`}>
           <div className="flex items-center justify-between gap-4">
             <p className="truncate text-[11px] uppercase tracking-[0.3em] text-white/50">
               {categoryLabel} · {project.year}
@@ -141,7 +131,7 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
               </button>
             </div>
           </div>
-        </LiquidGlass>
+        </div>
 
         {/* 播放器 + 左右切换 */}
         <div className="relative">
@@ -200,16 +190,7 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
         </div>
 
         {/* 下方信息区：标题 / 说明 / 技术栈（液态玻璃面板） */}
-        <LiquidGlass
-          borderRadius={22}
-          blur={0.4}
-          saturation={1.2}
-          displacementScale={1}
-          elasticity={0.6}
-          shadowIntensity={0.25}
-          className={`mt-6 ${chrome}`}
-          style={{ background: "rgba(255,255,255,0.07)", padding: "20px 24px" }}
-        >
+        <div className={`glass-panel mt-6 rounded-[22px] p-[20px_24px] ${chrome}`}>
           <div className="flex flex-wrap items-baseline justify-between gap-3">
             <h3 className="text-2xl font-light tracking-tight text-white">{project.title}</h3>
             {hasMultiple && (
@@ -258,7 +239,7 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
               </button>
             </div>
           )}
-        </LiquidGlass>
+        </div>
       </div>
     </div>
   );

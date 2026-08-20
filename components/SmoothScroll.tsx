@@ -14,8 +14,10 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const lenis = new Lenis({
-      duration: 1.15,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      duration: 1.0,
+      // easeInOutCubic：开始和结束都柔和，不会像指数缓出那样前快后慢
+      easing: (t: number) =>
+        t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
       smoothWheel: true,
       touchMultiplier: 1.5,
     });

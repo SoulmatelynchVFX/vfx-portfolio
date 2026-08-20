@@ -216,3 +216,17 @@ button,
       transition: none;
     }
   }
+
+  /* ---- 玻璃面板（Liquid Glass 窗口） ----
+     用于 FilterBar、Lightbox 顶栏/信息区等「窗口」。
+     使用稳定的 CSS backdrop-filter，在暗色背景下也有清晰的玻璃质感：
+     高模糊 + 饱和度提升 + 细亮边 + 顶部内高光 + 外部投影。 */
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }

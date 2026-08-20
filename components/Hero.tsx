@@ -32,6 +32,7 @@ const titleItem: Variants = {
  */
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const v = videoRef.current;
@@ -115,8 +116,43 @@ export default function Hero() {
     return () => cancelAnimationFrame(raf);
   }, []);
 
+  // 滚动视差：向下滚动时 Hero 标题与 meta 淡出上移，形成「镜头推远」的电影感。
+  // 直接操作 DOM，不触发 React 重渲染；尊重 prefers-reduced-motion。
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const hero = heroRef.current;
+    if (!hero) return;
+    const titleWrap = hero.querySelector<HTMLElement>("[data-parallax='title']");
+    const meta = hero.querySelector<HTMLElement>("[data-parallax='meta']");
+    const scrollHint = hero.querySelector<HTMLElement>("[data-parallax='scroll']");
+
+    const onScroll = () => {
+      const vh = window.innerHeight || 1;
+      const p = Math.min(1, Math.max(0, window.scrollY / vh));
+      if (titleWrap) {
+        titleWrap.style.opacity = (1 - p * 0.95).toFixed(3);
+        titleWrap.style.transform = `translateY(${(-p * 70).toFixed(1)}px) scale(${(1 - p * 0.06).toFixed(3)})`;
+      }
+      if (meta) {
+        meta.style.opacity = (1 - p * 1.2).toFixed(3);
+        meta.style.transform = `translateY(${(-p * 40).toFixed(1)}px)`;
+      }
+      if (scrollHint) {
+        scrollHint.style.opacity = (1 - p * 1.6).toFixed(3);
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <section className="relative h-svh min-h-[560px] w-full select-none overflow-hidden bg-[#0a0a0a]">
+    <section
+      ref={heroRef}
+      className="relative h-svh min-h-[560px] w-full select-none overflow-hidden bg-[#0a0a0a]"
+    >
       {/* 1. 底层视频：全屏铺满（金翅大鹏 golden-wing），poster 兜底首帧 */}
       <video
         ref={videoRef}
@@ -136,7 +172,10 @@ export default function Hero() {
 
       {/* 3. 标题：SVG 纯描边浮雕玻璃字（字心透空 + 三层描边做立体边 + 双投影），
               与下方小字拉开层级；浮雕高光方向由背景视频亮区驱动（见下方采样 effect） */}
-      <div className="liquid-title-glow pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
+      <div
+        data-parallax="title"
+        className="liquid-title-glow pointer-events-none absolute inset-0 z-20 flex items-center justify-center"
+      >
         <motion.h1
           variants={titleItem}
           initial="hidden"
@@ -211,10 +250,11 @@ export default function Hero() {
 
       {/* 5. 标题下方头衔 + 标语（液态玻璃文字） */}
       <motion.div
+        data-parallax="meta"
         variants={container}
         initial="hidden"
         animate="show"
-        className="absolute bottom-[14%] left-1/2 z-30 flex -translate-x-1/2 flex-col items-center text-center"
+        className="absolute bottom-[16%] left-1/2 z-30 flex -translate-x-1/2 flex-col items-center text-center"
       >
         <motion.p
           variants={item}
@@ -234,11 +274,12 @@ export default function Hero() {
       <motion.a
         href="#works"
         data-cursor="link"
+        data-parallax="scroll"
         aria-label="向下滚动查看作品"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.1, duration: 0.8 }}
-        className="absolute bottom-8 left-1/2 z-30 flex -translate-x-1/2 flex-col items-center gap-3 text-white/40 transition hover:text-white"
+        className="absolute bottom-[6%] left-1/2 z-30 flex -translate-x-1/2 flex-col items-center gap-3 text-white/40 transition hover:text-white"
       >
         <span className="text-[10px] uppercase tracking-[0.4em]">Scroll</span>
         <span className="h-10 w-px animate-pulse bg-gradient-to-b from-white/70 to-transparent" />

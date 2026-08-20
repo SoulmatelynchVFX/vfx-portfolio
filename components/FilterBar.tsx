@@ -20,10 +20,10 @@ export default function FilterBar({ categories, active, onChange }: FilterBarPro
             type="button"
             onClick={() => onChange(c.id)}
             aria-pressed={isActive}
-            className={`shrink-0 whitespace-nowrap rounded-full border px-4 py-1.5 text-xs tracking-wide transition-colors duration-200 ${
+            className={`shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs tracking-wide transition-all duration-200 ${
               isActive
-                ? "border-white bg-white text-black"
-                : "border-white/15 bg-transparent text-white/60 hover:border-white/40 hover:text-white"
+                ? "bg-white text-black border border-white"
+                : "glass-button"
             }`}
           >
             {c.label}

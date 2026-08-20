@@ -47,7 +47,7 @@ export default function ProjectCard({ project, onOpen }: ProjectCardProps) {
       aria-label={`播放作品：${project.title}`}
       className="group block w-full text-left"
     >
-      <div className="relative aspect-video overflow-hidden bg-[#101010] ring-1 ring-white/10 transition duration-300 group-hover:ring-white/30">
+      <div className="glass-card relative aspect-video overflow-hidden rounded-2xl">
         {/* 封面图：悬停渐隐并轻微放大 */}
         <Image
           src={project.poster}
@@ -77,7 +77,7 @@ export default function ProjectCard({ project, onOpen }: ProjectCardProps) {
         {/* 轻微压暗层，保证时长标签可读 */}
         <div className="pointer-events-none absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/20" />
 
-        <span className="absolute right-2 top-2 rounded-sm bg-black/70 px-1.5 py-0.5 text-[10px] tabular-nums text-white/80">
+        <span className="glass-tag absolute right-2 top-2 rounded-md px-1.5 py-0.5 text-[10px] tabular-nums text-white/85">
           {project.duration}
         </span>
       </div>

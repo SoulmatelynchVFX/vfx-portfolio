@@ -2,7 +2,6 @@
 
 import { motion, type Variants } from "framer-motion";
 import { site } from "../data/site";
-import ParticleLayer from "./ParticleLayer";
 
 const container: Variants = {
   hidden: {},
@@ -69,23 +68,12 @@ export default function About() {
               </div>
             </motion.div>
 
-            <motion.div
+            <motion.h2
               variants={item}
-              className="mt-6 flex w-40 justify-center sm:w-52"
-              role="heading"
-              aria-level={2}
-              aria-label={name}
+              className="font-ios mt-8 text-3xl font-light tracking-tight text-white sm:text-4xl"
             >
-              <ParticleLayer
-                text={name}
-                fontSize={34}
-                fontWeight={500}
-                density={2}
-                speed={0.55}
-                repelStrength={0.2}
-                className="h-11 w-full sm:h-12"
-              />
-            </motion.div>
+              {name}
+            </motion.h2>
             <motion.p
               variants={item}
               className="font-ios mt-2 text-xs uppercase tracking-[0.3em] text-white/50"

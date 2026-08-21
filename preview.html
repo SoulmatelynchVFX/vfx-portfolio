@@ -62,8 +62,6 @@
   .hero .scroll .bar { width:1px; height:36px; background:linear-gradient(to bottom, rgba(255,255,255,.7), transparent); animation:scrollPulse 2s ease-in-out infinite; }
 
   /* ===== 粒子文字层（ParticleText 引擎：进入视口汇聚成字 / 离开散回粒子） ===== */
-  .pt-about { display:block; width:160px; height:44px; margin-top:24px; }
-  @media (min-width:640px){ .pt-about { width:208px; height:48px; } }
   .pt-2026 { display:block; width:288px; height:64px; margin:48px auto 0; }
   @media (min-width:640px){ .pt-2026 { width:384px; height:80px; } }
   .works-title { font-size:32px; font-weight:300; letter-spacing:-0.02em; color:#fff; margin:24px 0; }
@@ -222,7 +220,7 @@
             </div>
           </div>
         </div>
-        <canvas class="pt-about" id="pt-about" role="heading" aria-level="2" aria-label="Seal Wang"></canvas>
+        <h2 class="font-ios">Seal Wang</h2>
         <p class="role font-ios">VFX Artist</p>
         <p class="exp font-ios">Senior VFX Artist · 曾参与多部广告与游戏过场</p>
         <p class="motto font-ios">“特效是叙事的延长线。”</p>
@@ -448,9 +446,9 @@
     constructor(canvas, opts) {
       this.canvas = canvas;
       this.ctx = canvas.getContext("2d");
-      this.opts = Object.assign({ text:"", subText:"", fontSize:0, subFontSize:0, color:"#ffffff", density:5, maxParticles:7000, repelRadius:110, repelStrength:2.2, glow:true, fontWeight:700, speed:1 }, opts);
+      this.opts = Object.assign({ text:"", subText:"", fontSize:0, subFontSize:0, color:"#ffffff", density:5, maxParticles:7000, repelRadius:110, repelStrength:2.2, glow:true, fontWeight:700, speed:1, align:"center", rainbow:false, rainbowSat:60, flow:false, flowSpeed:240 }, opts);
       this.particles = []; this.mode = "converge"; this.raf = 0; this.dpr = 1; this.W = 0; this.H = 0;
-      this.mouse = { x:-9999, y:-9999, active:false }; this.ro = null; this.destroyed = false;
+      this.mouse = { x:-9999, y:-9999, active:false }; this.ro = null; this.destroyed = false; this.flowX = -1; this.lastT = 0;
       this.resize = this.resize.bind(this); this.frame = this.frame.bind(this);
       this.onMove = this.onMove.bind(this); this.onOut = this.onOut.bind(this);
       window.addEventListener("resize", this.resize);
@@ -461,13 +459,14 @@
     }
     sample() {
       const o = document.createElement("canvas"); o.width = this.W; o.height = this.H;
-      const c = o.getContext("2d"); c.fillStyle = "#fff"; c.textAlign = "center"; c.textBaseline = "middle";
+      const c = o.getContext("2d"); c.fillStyle = "#fff"; c.textAlign = this.opts.align; c.textBaseline = "middle";
       const cssW = this.W / this.dpr, cssH = this.H / this.dpr;
       const fs = (this.opts.fontSize || Math.min(cssW, cssH) * 0.16) * this.dpr;
       const hasSub = !!this.opts.subText;
       c.font = `${this.opts.fontWeight} ${fs}px -apple-system, "SF Pro Display", "Helvetica Neue", "Segoe UI", system-ui, Arial, sans-serif`;
-      c.fillText(this.opts.text, this.W / 2, this.H / 2 - (hasSub ? fs * 0.3 : 0));
-      if (hasSub) { const sfs = (this.opts.subFontSize || this.opts.fontSize * 0.42) * this.dpr; c.font = `500 ${sfs}px Arial, sans-serif`; c.fillText(this.opts.subText, this.W / 2, this.H / 2 + fs * 0.55); }
+      const tx = this.opts.align === "left" ? 0 : this.opts.align === "right" ? this.W : this.W / 2;
+      c.fillText(this.opts.text, tx, this.H / 2 - (hasSub ? fs * 0.3 : 0));
+      if (hasSub) { const sfs = (this.opts.subFontSize || this.opts.fontSize * 0.42) * this.dpr; c.font = `500 ${sfs}px Arial, sans-serif`; c.fillText(this.opts.subText, tx, this.H / 2 + fs * 0.55); }
       const data = c.getImageData(0, 0, this.W, this.H).data;
       const step = Math.max(3, Math.round(this.opts.density * this.dpr));
       const pts = [];
@@ -478,7 +477,7 @@
     build() {
       this.particles = this.sample().map(t => {
         const a = Math.random() * Math.PI * 2, r = Math.max(this.W, this.H) * (0.4 + Math.random() * 0.5);
-        return { x: this.W / 2 + Math.cos(a) * r, y: this.H / 2 + Math.sin(a) * r, vx: 0, vy: 0, tx: t.x, ty: t.y, dx: Math.random() * this.W, dy: Math.random() * this.H, size: (Math.random() * 1.1 + 0.5) * this.dpr, alpha: 0, tAlpha: 0.85 };
+        return { x: this.W / 2 + Math.cos(a) * r, y: this.H / 2 + Math.sin(a) * r, vx: 0, vy: 0, tx: t.x, ty: t.y, dx: Math.random() * this.W, dy: Math.random() * this.H, size: (Math.random() * 1.1 + 0.5) * this.dpr, alpha: 0, tAlpha: 0.85, hue: (t.x / this.W) * 360 };
       });
     }
     resize() {
@@ -497,8 +496,14 @@
     frame() {
       if (this.destroyed) return;
       const c = this.ctx; c.clearRect(0, 0, this.W, this.H);
+      const now = performance.now(); const dt = this.lastT ? (now - this.lastT) / 1000 : 0; this.lastT = now;
       if (this.opts.glow) c.globalCompositeOperation = "lighter";
-      const k = (this.mode === "converge" ? 0.022 : 0.012) * this.opts.speed, damp = 0.9, R = this.opts.repelRadius * this.dpr, col = this.opts.color;
+      const k = (this.mode === "converge" ? 0.022 : 0.012) * this.opts.speed, damp = 0.9, R = this.opts.repelRadius * this.dpr, useRainbow = this.opts.rainbow, band = 110 * this.dpr;
+      if (this.opts.flow) {
+        if (this.flowX < 0) this.flowX = -band;
+        this.flowX += dt * this.opts.flowSpeed * this.dpr;
+        if (this.flowX > this.W + band) this.flowX = -band;
+      }
       for (const p of this.particles) {
         const tgx = this.mode === "converge" ? p.tx : p.dx, tgy = this.mode === "converge" ? p.ty : p.dy;
         p.vx += (tgx - p.x) * k; p.vy += (tgy - p.y) * k;
@@ -508,7 +513,14 @@
         }
         p.vx *= damp; p.vy *= damp; p.x += p.vx; p.y += p.vy;
         p.tAlpha = this.mode === "converge" ? 0.85 : 0.2; p.alpha += (p.tAlpha - p.alpha) * 0.05;
-        c.globalAlpha = p.alpha; c.fillStyle = col; c.beginPath(); c.arc(p.x, p.y, p.size, 0, Math.PI * 2); c.fill();
+        let light = 0;
+        if (this.opts.flow && this.mode === "converge") {
+          const d = Math.abs(p.x - this.flowX);
+          if (d < band) light = 1 - d / band;
+        }
+        c.globalAlpha = Math.min(1, p.alpha * (1 + light * 0.8));
+        c.fillStyle = useRainbow ? "hsl(" + p.hue + " " + this.opts.rainbowSat + "% " + (62 + light * 35) + "%)" : (light > 0 ? "hsl(0 0% " + (55 + light * 40) + "%)" : this.opts.color);
+        c.beginPath(); c.arc(p.x, p.y, p.size, 0, Math.PI * 2); c.fill();
       }
       c.globalAlpha = 1; c.globalCompositeOperation = "source-over";
       this.raf = requestAnimationFrame(this.frame);
@@ -520,9 +532,8 @@
     }
   }
 
-  // ===== 实例化两处粒子标题，并绑定「进入汇聚 / 离开散开」 =====
-  const aboutPT = new ParticleText(document.getElementById("pt-about"), { text: "Seal Wang", fontSize: 34, fontWeight: 500, density: 2, speed: 0.55, repelStrength: 0.2 });
-  const pt2026 = new ParticleText(document.getElementById("pt-2026"), { text: "2026VFX", fontSize: 60, fontWeight: 600, density: 2, speed: 0.55, repelStrength: 0.2 });
+  // ===== 实例化粒子标题，并绑定「进入汇聚 / 离开散开」 =====
+  const pt2026 = new ParticleText(document.getElementById("pt-2026"), { text: "2026VFX", fontSize: 60, fontWeight: 600, density: 2, speed: 0.3, repelStrength: 0.2, rainbow: true, flow: true });
   function bindInview(canvas, pt, amount) {
     if (!("IntersectionObserver" in window)) { pt.converge(); return; }
     const io = new IntersectionObserver((es) => {
@@ -530,7 +541,6 @@
     }, { threshold: amount });
     io.observe(canvas);
   }
-  bindInview(document.getElementById("pt-about"), aboutPT, 0.2);
   bindInview(document.getElementById("pt-2026"), pt2026, 0.2);
 
   // ===== 液态玻璃：采样背景视频亮区重心，驱动高光方向跟随画面（与 Hero.tsx 一致） =====

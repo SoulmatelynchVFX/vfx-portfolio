@@ -50,8 +50,10 @@ export default function Home() {
             fontSize={60}
             fontWeight={600}
             density={2}
-            speed={0.55}
+            speed={0.3}
             repelStrength={0.2}
+            rainbow
+            flow
             className="h-16 w-72 sm:h-20 sm:w-96"
           />
         </div>

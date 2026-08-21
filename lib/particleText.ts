@@ -39,6 +39,16 @@ export interface ParticleTextOptions {
   fontWeight?: number;
   /** 汇聚/散开速度因子（1 为默认，<1 减慢，>1 加快） */
   speed?: number;
+  /** 文字水平对齐：决定粒子目标点的水平位置 */
+  align?: "left" | "center" | "right";
+  /** 启用彩虹色：按目标 x 映射到 HSL 色相（忽略 color） */
+  rainbow?: boolean;
+  /** 彩虹饱和度（0-100，默认 70） */
+  rainbowSat?: number;
+  /** 启用流光：一条亮带沿 x 方向循环扫过文字（汇聚态生效） */
+  flow?: boolean;
+  /** 流光移动速度（CSS px/s，默认 240） */
+  flowSpeed?: number;
 }
 
 interface Particle {
@@ -53,6 +63,8 @@ interface Particle {
   size: number;
   alpha: number;
   tAlpha: number;
+  /** 预设色相（0-360），rainbow 模式生效 */
+  hue: number;
 }
 
 export class ParticleText {
@@ -68,6 +80,8 @@ export class ParticleText {
   private mouse = { x: -9999, y: -9999, active: false };
   private ro: ResizeObserver | null = null;
   private destroyed = false;
+  private flowX = -1;
+  private lastT = 0;
 
   constructor(canvas: HTMLCanvasElement, opts: ParticleTextOptions) {
     this.canvas = canvas;
@@ -87,6 +101,11 @@ export class ParticleText {
       glow: opts.glow ?? true,
       fontWeight: opts.fontWeight ?? 700,
       speed: opts.speed ?? 1,
+      align: opts.align ?? "center",
+      rainbow: opts.rainbow ?? false,
+      rainbowSat: opts.rainbowSat ?? 60,
+      flow: opts.flow ?? false,
+      flowSpeed: opts.flowSpeed ?? 240,
     };
 
     this.resize = this.resize.bind(this);
@@ -116,7 +135,7 @@ export class ParticleText {
     const o = off.getContext("2d");
     if (!o) return [];
     o.fillStyle = "#fff";
-    o.textAlign = "center";
+    o.textAlign = this.opts.align;
     o.textBaseline = "middle";
 
     const cssW = this.W / this.dpr;
@@ -126,11 +145,13 @@ export class ParticleText {
 
     const hasSub = !!subText;
     o.font = `${fontWeight} ${fs}px -apple-system, "SF Pro Display", "Helvetica Neue", "Segoe UI", system-ui, Arial, sans-serif`;
-    o.fillText(text, this.W / 2, this.H / 2 - (hasSub ? fs * 0.3 : 0));
+    const tx =
+      this.opts.align === "left" ? 0 : this.opts.align === "right" ? this.W : this.W / 2;
+    o.fillText(text, tx, this.H / 2 - (hasSub ? fs * 0.3 : 0));
     if (hasSub) {
       const sfs = (this.opts.subFontSize || this.opts.fontSize! * 0.42) * this.dpr;
       o.font = `500 ${sfs}px -apple-system, "SF Pro Display", Arial, sans-serif`;
-      o.fillText(subText, this.W / 2, this.H / 2 + fs * 0.55);
+      o.fillText(subText, tx, this.H / 2 + fs * 0.55);
     }
 
     const data = o.getImageData(0, 0, this.W, this.H).data;
@@ -167,6 +188,7 @@ export class ParticleText {
         size: (Math.random() * 1.1 + 0.5) * this.dpr,
         alpha: 0,
         tAlpha: 0.85,
+        hue: (t.x / this.W) * 360,
       };
     });
   }
@@ -208,12 +230,21 @@ export class ParticleText {
   private frame() {
     if (this.destroyed) return;
     const c = this.ctx;
+    const now = performance.now();
+    const dt = this.lastT ? (now - this.lastT) / 1000 : 0;
+    this.lastT = now;
     c.clearRect(0, 0, this.W, this.H);
     if (this.opts.glow) c.globalCompositeOperation = "lighter";
     const k = (this.mode === "converge" ? 0.022 : 0.012) * this.opts.speed;
     const damp = 0.9;
     const R = this.opts.repelRadius * this.dpr;
-    const col = this.opts.color;
+    const useRainbow = this.opts.rainbow;
+    const band = 110 * this.dpr;
+    if (this.opts.flow) {
+      if (this.flowX < 0) this.flowX = -band;
+      this.flowX += dt * this.opts.flowSpeed * this.dpr;
+      if (this.flowX > this.W + band) this.flowX = -band;
+    }
     for (const p of this.particles) {
       const tgx = this.mode === "converge" ? p.tx : p.dx;
       const tgy = this.mode === "converge" ? p.ty : p.dy;
@@ -236,8 +267,18 @@ export class ParticleText {
       p.y += p.vy;
       p.tAlpha = this.mode === "converge" ? 0.85 : 0.2;
       p.alpha += (p.tAlpha - p.alpha) * 0.05;
-      c.globalAlpha = p.alpha;
-      c.fillStyle = col;
+      // 流光：亮带扫过时提升该处粒子的亮度与不透明度
+      let light = 0;
+      if (this.opts.flow && this.mode === "converge") {
+        const d = Math.abs(p.x - this.flowX);
+        if (d < band) light = 1 - d / band;
+      }
+      c.globalAlpha = Math.min(1, p.alpha * (1 + light * 0.8));
+      if (useRainbow) {
+        c.fillStyle = `hsl(${p.hue} ${this.opts.rainbowSat}% ${62 + light * 35}%)`;
+      } else {
+        c.fillStyle = light > 0 ? `hsl(0 0% ${55 + light * 40}%)` : this.opts.color;
+      }
       c.beginPath();
       c.arc(p.x, p.y, p.size, 0, Math.PI * 2);
       c.fill();

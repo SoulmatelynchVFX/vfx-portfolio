@@ -19,6 +19,16 @@ interface ParticleLayerProps {
   glow?: boolean;
   fontWeight?: number;
   speed?: number;
+  /** 文字水平对齐 */
+  align?: "left" | "center" | "right";
+  /** 启用彩虹色（按目标 x 映射 HSL） */
+  rainbow?: boolean;
+  /** 彩虹饱和度（0-100，默认 70） */
+  rainbowSat?: number;
+  /** 启用流光：亮带沿 x 循环扫过（汇聚态生效） */
+  flow?: boolean;
+  /** 流光速度（CSS px/s，默认 240） */
+  flowSpeed?: number;
   /** inview：进入视口汇聚、离开散开（默认）；manual：手动控制 */
   triggerMode?: "inview" | "manual";
   /** 汇聚触发所需可见比例 */
@@ -43,6 +53,11 @@ export default function ParticleLayer({
   glow,
   fontWeight,
   speed,
+  align,
+  rainbow,
+  rainbowSat,
+  flow,
+  flowSpeed,
   triggerMode = "inview",
   amount = 0.15,
 }: ParticleLayerProps) {
@@ -65,6 +80,11 @@ export default function ParticleLayer({
       glow,
       fontWeight,
       speed,
+      align,
+      rainbow,
+      rainbowSat,
+      flow,
+      flowSpeed,
     });
 
     let io: IntersectionObserver | null = null;
@@ -98,6 +118,11 @@ export default function ParticleLayer({
     glow,
     fontWeight,
     speed,
+    align,
+    rainbow,
+    rainbowSat,
+    flow,
+    flowSpeed,
     triggerMode,
     amount,
   ]);

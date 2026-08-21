@@ -10,9 +10,9 @@ import { setLenis } from "../lib/lenis";
  */
 export default function SmoothScroll({ children }: { children: ReactNode }) {
   useEffect(() => {
-    // 尊重「减少动态效果」系统偏好：直接不启用平滑滚动
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
+    // 用户明确要动效：不因系统「减少动态效果」而禁用平滑滚动。
+    // 注意：lenis 默认 respectReducedMotion=true，系统减少动画时也会强制 lerp=1、
+    // 程序化滚动变瞬时 —— 必须显式关闭，否则本机开「减少动画」时 Scroll 点击会直接跳转。
     const lenis = new Lenis({
       // 用 lerp（线性插值）模式，而非 duration 模式。
       // duration + easeInOutCubic 会在每次滚轮时启动一个头尾极慢的 1 秒长动画，
@@ -21,6 +21,7 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
       lerp: 0.1,
       smoothWheel: true,
       touchMultiplier: 1.5,
+      respectReducedMotion: false,
     });
     setLenis(lenis);
 

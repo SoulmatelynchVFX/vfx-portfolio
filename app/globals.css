@@ -126,19 +126,6 @@ button,
   animation: fade-in-up 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-  html {
-    scroll-behavior: auto;
-  }
-}
-
 /* ============================================================
    液态玻璃（Liquid Glass）文字 — 借鉴 nikdelvin/liquid-glass
    与 LogRocket 纯 CSS/SVG 还原 iOS 26 材质的思路。仅作用于
@@ -208,13 +195,6 @@ button,
   .reveal.in-view {
     opacity: 1;
     transform: none;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .reveal {
-      opacity: 1;
-      transform: none;
-      transition: none;
-    }
   }
 
   /* ---- 玻璃面板（Liquid Glass 窗口） ----

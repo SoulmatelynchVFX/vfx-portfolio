@@ -117,10 +117,9 @@ export default function Hero() {
   }, []);
 
   // 滚动视差：向下滚动时 Hero 标题与 meta 淡出上移，形成「镜头推远」的电影感。
-  // 直接操作 DOM，不触发 React 重渲染；尊重 prefers-reduced-motion。
+  // 直接操作 DOM，不触发 React 重渲染（用户明确要动效，不跟随系统减少动画设置）。
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const hero = heroRef.current;
     if (!hero) return;
     const titleWrap = hero.querySelector<HTMLElement>("[data-parallax='title']");

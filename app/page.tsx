@@ -3,6 +3,7 @@
 import About from "../components/About";
 import Hero from "../components/Hero";
 import Gallery from "../components/Gallery";
+import ParticleLayer from "../components/ParticleLayer";
 import { motion } from "framer-motion";
 import { projects } from "../data/projects";
 import { site } from "../data/site";
@@ -23,7 +24,7 @@ export default function Home() {
         <motion.header
           initial={{ opacity: 0, y: 32 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: false, amount: 0.2 }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           className="mb-12 flex flex-wrap items-end justify-between gap-4"
         >
@@ -41,6 +42,19 @@ export default function Home() {
         </motion.header>
 
         <Gallery />
+
+        {/* 作品集底部：粒子签名 2026VFX（居中） */}
+        <div className="mt-20 flex justify-center">
+          <ParticleLayer
+            text="2026VFX"
+            fontSize={60}
+            fontWeight={600}
+            density={2}
+            speed={0.55}
+            repelStrength={0.2}
+            className="h-16 w-72 sm:h-20 sm:w-96"
+          />
+        </div>
       </section>
 
       <footer className="border-t border-white/10">

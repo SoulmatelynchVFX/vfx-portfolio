@@ -10,23 +10,28 @@ import ProjectCard from "./ProjectCard";
 
 const gridVariants: Variants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
+  show: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
 };
 
 const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 28 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
+  hidden: { opacity: 0, y: 40, filter: "blur(6px)" },
+  show: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+  },
 };
 
 /**
- * 作品画廊：分类过滤 + 错落入场动画 + 缩略图网格 + 沉浸式播放弹窗。
+ * 作品画廊：分类过滤（项目 / 练习）+ 错落入场动画 + 缩略图网格 + 沉浸式播放弹窗。
  */
 export default function Gallery() {
-  const [active, setActive] = useState<CategoryId | "all">("all");
+  const [active, setActive] = useState<CategoryId>("project");
   const [selected, setSelected] = useState<number | null>(null);
 
   const visible = useMemo(
-    () => (active === "all" ? projects : projects.filter((p) => p.category === active)),
+    () => projects.filter((p) => p.category === active),
     [active]
   );
 

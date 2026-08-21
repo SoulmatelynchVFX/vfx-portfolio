@@ -37,7 +37,7 @@ const server = http.createServer(async (req, res) => {
     }
     const data = await readFile(filePath);
     const type = MIME[extname(filePath).toLowerCase()] || 'application/octet-stream';
-    res.writeHead(200, { 'Content-Type': type, 'Accept-Ranges': 'bytes' });
+    res.writeHead(200, { 'Content-Type': type, 'Accept-Ranges': 'bytes', 'Cache-Control': 'no-store, no-cache, must-revalidate' });
     res.end(data);
   } catch (e) {
     res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });

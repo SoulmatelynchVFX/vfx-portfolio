@@ -1,6 +1,9 @@
+"use client";
+
+import About from "../components/About";
 import Hero from "../components/Hero";
 import Gallery from "../components/Gallery";
-import Reveal from "../components/Reveal";
+import { motion } from "framer-motion";
 import { projects } from "../data/projects";
 import { site } from "../data/site";
 
@@ -9,13 +12,21 @@ export default function Home() {
     <main>
       <Hero />
 
+      {/* 个人介绍 */}
+      <About />
+
       {/* 作品画廊 */}
-      <Reveal>
-        <section
-          id="works"
-          className="mx-auto max-w-7xl px-4 py-24 sm:px-6 md:py-32 lg:px-8"
+      <section
+        id="works"
+        className="mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-4 py-24 sm:px-6 lg:px-8"
+      >
+        <motion.header
+          initial={{ opacity: 0, y: 32 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-12 flex flex-wrap items-end justify-between gap-4"
         >
-        <header className="mb-12 flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-[11px] uppercase tracking-[0.4em] text-white/40">
               Selected Works
@@ -27,11 +38,10 @@ export default function Home() {
           <p className="text-xs tabular-nums text-white/40">
             {projects.length} 部作品 · 2024–2026
           </p>
-        </header>
+        </motion.header>
 
         <Gallery />
-        </section>
-      </Reveal>
+      </section>
 
       <footer className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-10 text-center sm:flex-row sm:px-6 sm:text-left lg:px-8">

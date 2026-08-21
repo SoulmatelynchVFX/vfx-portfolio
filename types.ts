@@ -1,7 +1,7 @@
-export type CategoryId = "houdini" | "ue5" | "nuke" | "render";
+export type CategoryId = "project" | "practice";
 
 export interface Category {
-  id: CategoryId | "all";
+  id: CategoryId;
   label: string;
 }
 

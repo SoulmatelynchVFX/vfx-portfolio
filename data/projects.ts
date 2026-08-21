@@ -1,12 +1,9 @@
 import type { Category, Project } from "../types";
 
-/** 分类过滤标签。想加分类就在这里加一条，然后在 projects 里引用对应 id。 */
+/** 分类过滤标签：只保留「项目 / 练习」两个大类。 */
 export const categories: Category[] = [
-  { id: "all", label: "全部作品" },
-  { id: "houdini", label: "Houdini 粒子与流体" },
-  { id: "ue5", label: "UE5 实时渲染" },
-  { id: "nuke", label: "Nuke 影视合成" },
-  { id: "render", label: "三维渲染" },
+  { id: "project", label: "项目" },
+  { id: "practice", label: "练习" },
 ];
 
 /**
@@ -18,7 +15,7 @@ export const projects: Project[] = [
   {
     id: "particle-storm",
     title: "粒子风暴",
-    category: "houdini",
+    category: "project",
     year: "2025",
     duration: "00:18",
     description:
@@ -28,9 +25,45 @@ export const projects: Project[] = [
     poster: "/posters/particle-storm.jpg",
   },
   {
+    id: "cyber-street",
+    title: "赛博街区",
+    category: "project",
+    year: "2025",
+    duration: "00:28",
+    description:
+      "UE5 中的霓虹雨夜街道，Lumen 全局光照与 Nanite 高模资产支撑的实时渲染场景。",
+    techStack: ["Unreal Engine 5", "Lumen", "Nanite", "Megascans 资产"],
+    video: "/videos/cyber-street.mp4",
+    poster: "/posters/cyber-street.jpg",
+  },
+  {
+    id: "stealth-jet",
+    title: "隐形战机",
+    category: "project",
+    year: "2025",
+    duration: "00:26",
+    description:
+      "实拍素材上的 CG 战机合成：镜头跟踪、阴影匹配与大气透视统一，使用 Deep 合成处理前景遮挡。",
+    techStack: ["Nuke 跟踪", "Deep 合成", "Keylight 抠像", "大气透视匹配"],
+    video: "/videos/stealth-jet.mp4",
+    poster: "/posters/stealth-jet.jpg",
+  },
+  {
+    id: "neon-beacon",
+    title: "霓虹信标",
+    category: "project",
+    year: "2024",
+    duration: "00:22",
+    description:
+      "Niagara 粒子系统生成的悬浮光带与信号脉冲，在 Sequencer 中完成的镜头调度与后期调色。",
+    techStack: ["UE5 Niagara", "Sequencer", "光线追踪反射", "DaVinci 调色"],
+    video: "/videos/neon-beacon.mp4",
+    poster: "/posters/neon-beacon.jpg",
+  },
+  {
     id: "fluid-vessel",
     title: "流体容器",
-    category: "houdini",
+    category: "practice",
     year: "2025",
     duration: "00:24",
     description:
@@ -42,7 +75,7 @@ export const projects: Project[] = [
   {
     id: "magma-dragon",
     title: "熔岩巨兽",
-    category: "houdini",
+    category: "practice",
     year: "2024",
     duration: "00:32",
     description:
@@ -52,45 +85,9 @@ export const projects: Project[] = [
     poster: "/posters/magma-dragon.jpg",
   },
   {
-    id: "cyber-street",
-    title: "赛博街区",
-    category: "ue5",
-    year: "2025",
-    duration: "00:28",
-    description:
-      "UE5 中的霓虹雨夜街道，Lumen 全局光照与 Nanite 高模资产支撑的实时渲染场景。",
-    techStack: ["Unreal Engine 5", "Lumen", "Nanite", "Megascans 资产"],
-    video: "/videos/cyber-street.mp4",
-    poster: "/posters/cyber-street.jpg",
-  },
-  {
-    id: "neon-beacon",
-    title: "霓虹信标",
-    category: "ue5",
-    year: "2024",
-    duration: "00:22",
-    description:
-      "Niagara 粒子系统生成的悬浮光带与信号脉冲，在 Sequencer 中完成的镜头调度与后期调色。",
-    techStack: ["UE5 Niagara", "Sequencer", "光线追踪反射", "DaVinci 调色"],
-    video: "/videos/neon-beacon.mp4",
-    poster: "/posters/neon-beacon.jpg",
-  },
-  {
-    id: "stealth-jet",
-    title: "隐形战机",
-    category: "nuke",
-    year: "2025",
-    duration: "00:26",
-    description:
-      "实拍素材上的 CG 战机合成：镜头跟踪、阴影匹配与大气透视统一，使用 Deep 合成处理前景遮挡。",
-    techStack: ["Nuke 跟踪", "Deep 合成", "Keylight 抠像", "大气透视匹配"],
-    video: "/videos/stealth-jet.mp4",
-    poster: "/posters/stealth-jet.jpg",
-  },
-  {
     id: "macro-world",
     title: "微观世界",
-    category: "nuke",
+    category: "practice",
     year: "2024",
     duration: "00:20",
     description:
@@ -102,7 +99,7 @@ export const projects: Project[] = [
   {
     id: "still-life",
     title: "静物之光",
-    category: "render",
+    category: "practice",
     year: "2025",
     duration: "00:15",
     description:

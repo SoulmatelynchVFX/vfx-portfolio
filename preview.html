@@ -57,12 +57,12 @@
   .hero .meta { position:absolute; left:50%; bottom:16%; transform:translateX(-50%); z-index:30; text-align:center; display:flex; flex-direction:column; align-items:center; gap:14px; }
   .hero .meta .role { font-size:13px; letter-spacing:.45em; text-transform:uppercase; color:rgba(255,255,255,.90); animation:fadeUp .9s cubic-bezier(.16,1,.3,1) .42s both; }
   .hero .meta .tag { font-size:11px; letter-spacing:.3em; text-transform:uppercase; color:rgba(255,255,255,.55); animation:fadeUp .9s cubic-bezier(.16,1,.3,1) .54s both; }
-  .hero .scroll { position:absolute; left:50%; bottom:6%; transform:translateX(-50%); z-index:30; display:flex; flex-direction:column; align-items:center; gap:14px; color:rgba(255,255,255,.40); font-size:10px; letter-spacing:.4em; text-transform:uppercase; text-decoration:none; animation:fadeUp .8s ease 1.1s both; transition:color .25s; }
+  .hero .scroll { position:fixed; left:50%; bottom:6%; transform:translateX(-50%); z-index:30; display:flex; flex-direction:column; align-items:center; gap:14px; color:rgba(255,255,255,.40); font-size:10px; letter-spacing:.4em; text-transform:uppercase; text-decoration:none; opacity:0; transition:opacity .7s ease, color .25s; }
   .hero .scroll:hover { color:#fff; }
   .hero .scroll .bar { width:1px; height:36px; background:linear-gradient(to bottom, rgba(255,255,255,.7), transparent); animation:scrollPulse 2s ease-in-out infinite; }
 
   /* ===== Works 区 ===== */
-  .section-pad { max-width:1100px; margin:0 auto; padding:64px 24px; opacity:0; transform:translateY(48px); transition:opacity .9s ease, transform .9s cubic-bezier(.16,1,.3,1); }
+  .section-pad { max-width:1100px; margin:0 auto; padding:64px 24px; min-height:100vh; display:flex; flex-direction:column; justify-content:center; opacity:0; transform:translateY(48px); transition:opacity .9s ease, transform .9s cubic-bezier(.16,1,.3,1); }
   .section-pad.revealed { opacity:1; transform:none; }
   .section-title { font-size:12px; letter-spacing:.4em; text-transform:uppercase; color:rgba(255,255,255,.5); margin-bottom:20px; }
 
@@ -111,6 +111,66 @@
   .lightbox .info p { margin-top:8px; font-size:13px; line-height:1.6; color:rgba(255,255,255,.6); }
   .lightbox .info .tech { margin-top:10px; display:flex; flex-wrap:wrap; gap:8px; }
   .lightbox .info .tech span { font-size:11px; letter-spacing:.05em; color:rgba(255,255,255,.7); padding:4px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.16); }
+
+  /* ===== About 个人介绍（占位效果） ===== */
+  .about { background:#0a0a0a; min-height:100vh; display:flex; align-items:center; padding:96px 24px; opacity:0; transform:translateY(40px); transition:opacity .9s ease, transform .9s cubic-bezier(.16,1,.3,1); }
+  .about.revealed { opacity:1; transform:none; }
+  .about-inner { max-width:1100px; margin:0 auto; width:100%; display:grid; grid-template-columns:1fr; gap:48px; align-items:start; }
+  @media (min-width:1024px) {
+    .about-inner { grid-template-columns:5fr 7fr; gap:64px; }
+  }
+  .about-avatar { display:inline-block; padding:8px; border-radius:16px;
+    background:rgba(255,255,255,0.06); backdrop-filter:blur(14px) saturate(160%); -webkit-backdrop-filter:blur(14px) saturate(160%);
+    border:1px solid rgba(255,255,255,0.18); box-shadow:0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.25); }
+  .about-avatar .frame { position:relative; width:160px; aspect-ratio:1/1; border-radius:12px; overflow:hidden; background:#111; }
+  @media (min-width:640px) { .about-avatar .frame { width:208px; } }
+  .about-avatar .placeholder { width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.02)); }
+  .about-avatar .placeholder span { font-family:-apple-system,"SF Pro Display","SF Pro Text","Helvetica Neue","Segoe UI",system-ui,sans-serif; color:rgba(255,255,255,0.30); font-size:32px; font-weight:300; }
+  .about-avatar .placeholder .sub { margin-top:8px; font-size:10px; text-transform:uppercase; letter-spacing:0.2em; }
+  .about h2 { margin-top:32px; font-size:32px; font-weight:300; letter-spacing:-0.02em; color:#fff; }
+  @media (min-width:640px) { .about h2 { font-size:40px; } }
+  .about .role { margin-top:8px; font-size:12px; text-transform:uppercase; letter-spacing:0.3em; color:rgba(255,255,255,0.50); }
+  .about .exp { margin-top:12px; font-size:14px; color:rgba(255,255,255,0.60); }
+  .about .motto { margin-top:24px; font-size:14px; font-style:italic; color:rgba(255,255,255,0.50); }
+  .about-status { display:inline-flex; align-items:center; gap:8px; padding:8px 16px; border-radius:999px;
+    background:rgba(255,255,255,0.07); backdrop-filter:blur(10px) saturate(140%); -webkit-backdrop-filter:blur(10px) saturate(140%);
+    border:1px solid rgba(255,255,255,0.18); box-shadow:inset 0 1px 0 rgba(255,255,255,0.12); font-size:13px; color:rgba(255,255,255,0.90); }
+  .about-status::before { content:""; width:8px; height:8px; border-radius:50%; background:#34d399; box-shadow:0 0 8px rgba(52,211,153,0.6); }
+  .about-section-title { margin-top:40px; font-size:11px; text-transform:uppercase; letter-spacing:0.4em; color:rgba(255,255,255,0.40); }
+  .about-bio { margin-top:16px; display:flex; flex-direction:column; gap:16px; font-size:14px; line-height:1.7; color:rgba(255,255,255,0.70); }
+  .about-skills { margin-top:16px; display:flex; flex-wrap:wrap; gap:8px; }
+  .about-skills span { padding:6px 12px; border-radius:999px;
+    background:rgba(255,255,255,0.07); backdrop-filter:blur(10px) saturate(140%); -webkit-backdrop-filter:blur(10px) saturate(140%);
+    border:1px solid rgba(255,255,255,0.18); box-shadow:inset 0 1px 0 rgba(255,255,255,0.12); font-size:12px; color:rgba(255,255,255,0.80); }
+  .about-contact { margin-top:40px; display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:999px;
+    background:rgba(255,255,255,0.08); backdrop-filter:blur(12px) saturate(150%); -webkit-backdrop-filter:blur(12px) saturate(150%);
+    border:1px solid rgba(255,255,255,0.22); box-shadow:0 4px 16px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.18); color:rgba(255,255,255,0.90); font-size:12px; transition:all .2s; text-decoration:none; }
+  .about-contact:hover { background:rgba(255,255,255,0.92); border-color:rgba(255,255,255,0.90); color:#000; }
+
+  /* About / Works 入场：整块淡入上移 + 子项错落 + 卡片错落 */
+  @keyframes aboutItem { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:none; } }
+  @keyframes cardIn { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:none; } }
+  .about.revealed .about-left > *,
+  .about.revealed .about-right > * { animation: aboutItem .8s cubic-bezier(.16,1,.3,1) both; }
+  .about.revealed .about-left > *:nth-child(1){animation-delay:.06s}
+  .about.revealed .about-left > *:nth-child(2){animation-delay:.14s}
+  .about.revealed .about-left > *:nth-child(3){animation-delay:.22s}
+  .about.revealed .about-left > *:nth-child(4){animation-delay:.30s}
+  .about.revealed .about-left > *:nth-child(5){animation-delay:.38s}
+  .about.revealed .about-right > *:nth-child(1){animation-delay:.16s}
+  .about.revealed .about-right > *:nth-child(2){animation-delay:.24s}
+  .about.revealed .about-right > *:nth-child(3){animation-delay:.32s}
+  .about.revealed .about-right > *:nth-child(4){animation-delay:.40s}
+  .about.revealed .about-right > *:nth-child(5){animation-delay:.48s}
+  .about.revealed .about-right > *:nth-child(6){animation-delay:.56s}
+  .section-pad.revealed .card { animation: cardIn .7s cubic-bezier(.16,1,.3,1) both; }
+  .section-pad.revealed .card:nth-child(1){animation-delay:.05s}
+  .section-pad.revealed .card:nth-child(2){animation-delay:.12s}
+  .section-pad.revealed .card:nth-child(3){animation-delay:.19s}
+  .section-pad.revealed .card:nth-child(4){animation-delay:.26s}
+  .section-pad.revealed .card:nth-child(5){animation-delay:.33s}
+  .section-pad.revealed .card:nth-child(6){animation-delay:.40s}
 </style>
 </head>
 <body>
@@ -138,9 +198,42 @@
       <div class="tag font-ios liquid-text">Cinematic · Stylized · Real-time</div>
     </div>
 
-    <a class="scroll font-ios" href="#works" data-cursor="link" aria-label="向下滚动查看作品">
+    <a class="scroll font-ios" href="#about" id="hero-scroll" data-cursor="link" aria-label="向下滚动查看个人介绍">
       <span>Scroll</span><span class="bar"></span>
     </a>
+  </section>
+
+  <!-- ============ About ============ -->
+  <section class="about" id="about">
+    <div class="about-inner">
+      <div class="about-left">
+        <div class="about-avatar">
+          <div class="frame">
+            <div class="placeholder">
+              <span>头像</span>
+              <span class="sub">占位符</span>
+            </div>
+          </div>
+        </div>
+        <h2 class="font-ios">Seal Wang</h2>
+        <p class="role font-ios">VFX Artist</p>
+        <p class="exp font-ios">Senior VFX Artist · 曾参与多部广告与游戏过场</p>
+        <p class="motto font-ios">“特效是叙事的延长线。”</p>
+      </div>
+      <div class="about-right">
+        <div class="about-status font-ios">可接项目 · 随时可聊</div>
+        <div class="about-section-title font-ios">简介</div>
+        <div class="about-bio font-ios">
+          <p>专注于影视级特效与实时渲染，热衷于在粒子、流体与光影之间寻找戏剧性的瞬间。</p>
+          <p>擅长 Houdini 程序化特效、UE5 实时渲染与 Nuke 合成，习惯以导演思维拆解镜头，用技术手段放大情绪。</p>
+        </div>
+        <div class="about-section-title font-ios">技能</div>
+        <div class="about-skills">
+          <span>Houdini</span><span>UE5</span><span>Nuke</span><span>Redshift</span><span>Karma</span><span>VEX</span><span>Niagara</span><span>Python</span>
+        </div>
+        <a class="about-contact font-ios" href="mailto:soulmatelynch@gmail.com" data-cursor="link">联系我 →</a>
+      </div>
+    </div>
   </section>
 
   <!-- ============ Works ============ -->
@@ -176,29 +269,26 @@
 <script>
   // ===== 数据（与 data/projects.ts 一致） =====
   const CATS = [
-    { id: "all", label: "全部作品" },
-    { id: "houdini", label: "Houdini 粒子与流体" },
-    { id: "ue5", label: "UE5 实时渲染" },
-    { id: "nuke", label: "Nuke 影视合成" },
-    { id: "render", label: "三维渲染" },
+    { id: "project", label: "项目" },
+    { id: "practice", label: "练习" },
   ];
   const PROJECTS = [
-    { id:"particle-storm", title:"粒子风暴", category:"houdini", year:"2025", duration:"00:18", description:"由 Houdini POP 粒子系统驱动的万点星火，配合 VEX 编写的自定义风力与湍流场，捕捉爆裂瞬间的秩序与混沌。", tech:["Houdini POP Network","VEX 自定义场","Karma XPU","Nuke 分层合成"], video:"public/videos/particle-storm.mp4", poster:"public/posters/particle-storm.jpg" },
-    { id:"fluid-vessel", title:"流体容器", category:"houdini", year:"2025", duration:"00:24", description:"FLIP 流体在透明容器中的翻涌与回落，使用白水（Whitewater）辅助粒子补充细节，VDB 网格化后在 Karma 中渲染。", tech:["Houdini FLIP","Whitewater","VDB 网格化","Karma XPU"], video:"public/videos/fluid-vessel.mp4", poster:"public/posters/fluid-vessel.jpg" },
-    { id:"magma-dragon", title:"熔岩巨兽", category:"houdini", year:"2024", duration:"00:32", description:"Pyro 烟火与 FLIP 流体耦合的熔岩表面，通过自定义材质渐变模拟高温金属的流动质感。", tech:["Houdini Pyro","FLIP 耦合","Redshift","材质渐变"], video:"public/videos/magma-dragon.mp4", poster:"public/posters/magma-dragon.jpg" },
-    { id:"cyber-street", title:"赛博街区", category:"ue5", year:"2025", duration:"00:28", description:"UE5 中的霓虹雨夜街道，Lumen 全局光照与 Nanite 高模资产支撑的实时渲染场景。", tech:["Unreal Engine 5","Lumen","Nanite","Megascans 资产"], video:"public/videos/cyber-street.mp4", poster:"public/posters/cyber-street.jpg" },
-    { id:"neon-beacon", title:"霓虹信标", category:"ue5", year:"2024", duration:"00:22", description:"Niagara 粒子系统生成的悬浮光带与信号脉冲，在 Sequencer 中完成的镜头调度与后期调色。", tech:["UE5 Niagara","Sequencer","光线追踪反射","DaVinci 调色"], video:"public/videos/neon-beacon.mp4", poster:"public/posters/neon-beacon.jpg" },
-    { id:"stealth-jet", title:"隐形战机", category:"nuke", year:"2025", duration:"00:26", description:"实拍素材上的 CG 战机合成：镜头跟踪、阴影匹配与大气透视统一，使用 Deep 合成处理前景遮挡。", tech:["Nuke 跟踪","Deep 合成","Keylight 抠像","大气透视匹配"], video:"public/videos/stealth-jet.mp4", poster:"public/posters/stealth-jet.jpg" },
-    { id:"macro-world", title:"微观世界", category:"nuke", year:"2024", duration:"00:20", description:"显微摄影风格的微观生物群落，多通道 AOV 分层合成，辅以胶片颗粒与色差等电影化处理。", tech:["Nuke 多通道合成","AOV 分层","胶片颗粒","色差模拟"], video:"public/videos/macro-world.mp4", poster:"public/posters/macro-world.jpg" },
-    { id:"still-life", title:"静物之光", category:"render", year:"2025", duration:"00:15", description:"Octane 渲染的珠宝静物，聚焦金属与玻璃材质的折射、焦散表现与 HDRI 布光练习。", tech:["Cinema 4D","Octane Render","焦散","HDRI 布光"], video:"public/videos/still-life.mp4", poster:"public/posters/still-life.jpg" },
+    { id:"particle-storm", title:"粒子风暴", category:"project", year:"2025", duration:"00:18", description:"由 Houdini POP 粒子系统驱动的万点星火，配合 VEX 编写的自定义风力与湍流场，捕捉爆裂瞬间的秩序与混沌。", tech:["Houdini POP Network","VEX 自定义场","Karma XPU","Nuke 分层合成"], video:"public/videos/particle-storm.mp4", poster:"public/posters/particle-storm.jpg" },
+    { id:"cyber-street", title:"赛博街区", category:"project", year:"2025", duration:"00:28", description:"UE5 中的霓虹雨夜街道，Lumen 全局光照与 Nanite 高模资产支撑的实时渲染场景。", tech:["Unreal Engine 5","Lumen","Nanite","Megascans 资产"], video:"public/videos/cyber-street.mp4", poster:"public/posters/cyber-street.jpg" },
+    { id:"stealth-jet", title:"隐形战机", category:"project", year:"2025", duration:"00:26", description:"实拍素材上的 CG 战机合成：镜头跟踪、阴影匹配与大气透视统一，使用 Deep 合成处理前景遮挡。", tech:["Nuke 跟踪","Deep 合成","Keylight 抠像","大气透视匹配"], video:"public/videos/stealth-jet.mp4", poster:"public/posters/stealth-jet.jpg" },
+    { id:"neon-beacon", title:"霓虹信标", category:"project", year:"2024", duration:"00:22", description:"Niagara 粒子系统生成的悬浮光带与信号脉冲，在 Sequencer 中完成的镜头调度与后期调色。", tech:["UE5 Niagara","Sequencer","光线追踪反射","DaVinci 调色"], video:"public/videos/neon-beacon.mp4", poster:"public/posters/neon-beacon.jpg" },
+    { id:"fluid-vessel", title:"流体容器", category:"practice", year:"2025", duration:"00:24", description:"FLIP 流体在透明容器中的翻涌与回落，使用白水（Whitewater）辅助粒子补充细节，VDB 网格化后在 Karma 中渲染。", tech:["Houdini FLIP","Whitewater","VDB 网格化","Karma XPU"], video:"public/videos/fluid-vessel.mp4", poster:"public/posters/fluid-vessel.jpg" },
+    { id:"magma-dragon", title:"熔岩巨兽", category:"practice", year:"2024", duration:"00:32", description:"Pyro 烟火与 FLIP 流体耦合的熔岩表面，通过自定义材质渐变模拟高温金属的流动质感。", tech:["Houdini Pyro","FLIP 耦合","Redshift","材质渐变"], video:"public/videos/magma-dragon.mp4", poster:"public/posters/magma-dragon.jpg" },
+    { id:"macro-world", title:"微观世界", category:"practice", year:"2024", duration:"00:20", description:"显微摄影风格的微观生物群落，多通道 AOV 分层合成，辅以胶片颗粒与色差等电影化处理。", tech:["Nuke 多通道合成","AOV 分层","胶片颗粒","色差模拟"], video:"public/videos/macro-world.mp4", poster:"public/posters/macro-world.jpg" },
+    { id:"still-life", title:"静物之光", category:"practice", year:"2025", duration:"00:15", description:"Octane 渲染的珠宝静物，聚焦金属与玻璃材质的折射、焦散表现与 HDRI 布光练习。", tech:["Cinema 4D","Octane Render","焦散","HDRI 布光"], video:"public/videos/still-life.mp4", poster:"public/posters/still-life.jpg" },
   ];
   const catLabel = (id) => (CATS.find(c => c.id === id) || {}).label || id;
 
   // ===== 渲染 FilterBar =====
-  let activeCat = "all";
+  let activeCat = "project";
   const filterbar = document.getElementById("filterbar");
   filterbar.innerHTML = CATS.map(c =>
-    `<button data-cat="${c.id}" class="${c.id === "all" ? "active" : ""}">${c.label}</button>`
+    `<button data-cat="${c.id}" class="${c.id === activeCat ? "active" : ""}">${c.label}</button>`
   ).join("");
   filterbar.querySelectorAll("button").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -213,7 +303,7 @@
   const gallery = document.getElementById("gallery");
   const emptyEl = document.getElementById("empty");
   function renderGallery() {
-    const list = activeCat === "all" ? PROJECTS : PROJECTS.filter(p => p.category === activeCat);
+    const list = PROJECTS.filter(p => p.category === activeCat);
     emptyEl.style.display = list.length ? "none" : "block";
     gallery.innerHTML = list.map(p => `
       <button class="card" data-id="${p.id}" data-cursor="play" aria-label="播放作品：${p.title}">
@@ -263,8 +353,8 @@
   (v.play && v.play().catch(()=>{}));
   v.addEventListener("canplay", () => v.play().catch(()=>{}), { once:true });
 
-  // ===== 向下滚动提示：自定义缓动平滑滚动（不再直接弹页） =====
-  const scrollLink = document.querySelector('a[href="#works"]');
+  // ===== 向下滚动提示：位置驱动两段引导（Hero→About→Works），到达 Works 后渐隐 =====
+  const scrollLink = document.getElementById("hero-scroll");
   function smoothScrollTo(targetY, duration = 700) {
     const startY = window.scrollY;
     const diff = targetY - startY;
@@ -277,13 +367,42 @@
     }
     requestAnimationFrame(step);
   }
+  function updateScrollButton() {
+    if (!scrollLink) return;
+    const about = document.getElementById("about");
+    const works = document.getElementById("works");
+    if (!about || !works) return;
+    const y = window.scrollY;
+    const aboutTop = about.getBoundingClientRect().top + y;
+    const worksTop = works.getBoundingClientRect().top + y;
+    let phase;
+    if (y < aboutTop - 120) phase = "about";
+    else if (y < worksTop - 120) phase = "works";
+    else phase = "done";
+    if (phase === "done") {
+      scrollLink.style.opacity = "0";
+      scrollLink.style.pointerEvents = "none";
+    } else {
+      scrollLink.style.opacity = "1";
+      scrollLink.style.pointerEvents = "auto";
+      scrollLink.setAttribute("href", "#" + (phase === "about" ? "about" : "works"));
+    }
+  }
   if (scrollLink) {
     scrollLink.addEventListener("click", (e) => {
       e.preventDefault();
-      const target = document.getElementById("works");
-      if (target) smoothScrollTo(target.offsetTop);
+      const about = document.getElementById("about");
+      const works = document.getElementById("works");
+      if (!about || !works) return;
+      const y = window.scrollY;
+      const aboutTop = about.getBoundingClientRect().top + y;
+      const worksTop = works.getBoundingClientRect().top + y;
+      const targetTop = y < aboutTop - 120 ? aboutTop : worksTop;
+      smoothScrollTo(targetTop);
     });
   }
+  window.addEventListener("scroll", updateScrollButton, { passive: true });
+  updateScrollButton();
 
   // ===== 滚动视差：Hero 标题随滚动淡出+上移，作品区入场 =====
   const titleWrap = document.querySelector(".hero .title-wrap");
@@ -300,14 +419,18 @@
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
 
-  if ("IntersectionObserver" in window && works) {
+  const revealOnView = (el) => {
+    if (!el) return;
+    if (!("IntersectionObserver" in window)) { el.classList.add("revealed"); return; }
     const io = new IntersectionObserver((entries) => {
-      entries.forEach((en) => { if (en.isIntersecting) works.classList.add("revealed"); });
+      entries.forEach((en) => {
+        if (en.isIntersecting) { el.classList.add("revealed"); io.unobserve(en.target); }
+      });
     }, { threshold: 0.12 });
-    io.observe(works);
-  } else if (works) {
-    works.classList.add("revealed");
-  }
+    io.observe(el);
+  };
+  revealOnView(document.getElementById("about"));
+  revealOnView(document.getElementById("works"));
 
   // ===== 液态玻璃：采样背景视频亮区重心，驱动高光方向跟随画面（与 Hero.tsx 一致） =====
   const canvas = document.createElement("canvas");

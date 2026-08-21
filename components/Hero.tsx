@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, type Variants } from "framer-motion";
 import { site } from "../data/site";
 
@@ -148,6 +148,35 @@ export default function Hero() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Scroll 按钮两阶段引导：Hero → About → Works，到达 Works 后渐隐；回到顶部时恢复。
+  // 阶段由「滚动位置」驱动（而非点击计数），因此渐隐在「到达 Works」时必然可见；
+  // 真正的平滑滚动交给 SmoothScroll 的全局锚点拦截（已验证可用），这里不拦截点击。
+  const [scrollPhase, setScrollPhase] = useState<"about" | "works" | "done">("about");
+  const [scrollReady, setScrollReady] = useState(false);
+
+  useEffect(() => {
+    const about = document.getElementById("about");
+    const works = document.getElementById("works");
+    if (!about || !works) return;
+    const onScroll = () => {
+      const y = window.scrollY;
+      const aboutTop = about.getBoundingClientRect().top + y;
+      const worksTop = works.getBoundingClientRect().top + y;
+      if (y < aboutTop - 120) setScrollPhase("about");
+      else if (y < worksTop - 120) setScrollPhase("works");
+      else setScrollPhase("done");
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // 首屏入场后 1.1s 再淡入按钮，避免与 Hero 标题动画抢戏
+  useEffect(() => {
+    const t = window.setTimeout(() => setScrollReady(true), 1100);
+    return () => window.clearTimeout(t);
+  }, []);
+
   return (
     <section
       ref={heroRef}
@@ -270,20 +299,26 @@ export default function Hero() {
         </motion.p>
       </motion.div>
 
-      {/* 6. 向下滚动提示 */}
-      <motion.a
-        href="#works"
+      {/* 6. 向下滚动提示：固定悬浮，Hero → About → Works，到达 Works 后渐隐 */}
+      <a
+        href={scrollPhase === "about" ? "#about" : "#works"}
         data-cursor="link"
-        data-parallax="scroll"
-        aria-label="向下滚动查看作品"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.1, duration: 0.8 }}
-        className="absolute bottom-[6%] left-1/2 z-30 flex -translate-x-1/2 flex-col items-center gap-3 text-white/40 transition hover:text-white"
+        aria-label={
+          scrollPhase === "about"
+            ? "向下滚动查看个人介绍"
+            : scrollPhase === "works"
+              ? "向下滚动查看作品集"
+              : "已到达作品集"
+        }
+        className="fixed bottom-[6%] left-1/2 z-30 flex -translate-x-1/2 flex-col items-center gap-3 text-white/40 transition-[opacity,color] duration-700 ease-out hover:text-white"
+        style={{
+          opacity: scrollReady && scrollPhase !== "done" ? 1 : 0,
+          pointerEvents: scrollReady && scrollPhase !== "done" ? "auto" : "none",
+        }}
       >
         <span className="text-[10px] uppercase tracking-[0.4em]">Scroll</span>
         <span className="h-10 w-px animate-pulse bg-gradient-to-b from-white/70 to-transparent" />
-      </motion.a>
+      </a>
     </section>
   );
 }

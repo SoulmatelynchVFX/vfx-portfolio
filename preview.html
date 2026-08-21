@@ -265,13 +265,13 @@
 
   // ===== 向下滚动提示：自定义缓动平滑滚动（不再直接弹页） =====
   const scrollLink = document.querySelector('a[href="#works"]');
-  function smoothScrollTo(targetY, duration = 900) {
+  function smoothScrollTo(targetY, duration = 700) {
     const startY = window.scrollY;
     const diff = targetY - startY;
     const start = performance.now();
     function step(now) {
       const t = Math.min(1, (now - start) / duration);
-      const e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; // easeInOutCubic
+      const e = 1 - Math.pow(1 - t, 3); // easeOutCubic：开头即加速，跟手不拖沓
       window.scrollTo(0, startY + diff * e);
       if (t < 1) requestAnimationFrame(step);
     }

@@ -14,10 +14,11 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const lenis = new Lenis({
-      duration: 1.0,
-      // easeInOutCubic：开始和结束都柔和，不会像指数缓出那样前快后慢
-      easing: (t: number) =>
-        t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
+      // 用 lerp（线性插值）模式，而非 duration 模式。
+      // duration + easeInOutCubic 会在每次滚轮时启动一个头尾极慢的 1 秒长动画，
+      // 表现为「泥里拖、阻力感强」。lerp 每帧按固定比例逼近目标，手感跟手且顺滑。
+      // 0.1 是平滑与跟手的平衡点：调高更跟手（更快抵达），调低更飘。
+      lerp: 0.1,
       smoothWheel: true,
       touchMultiplier: 1.5,
     });

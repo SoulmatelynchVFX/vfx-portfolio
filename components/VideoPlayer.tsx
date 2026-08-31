@@ -32,7 +32,7 @@ export default function VideoPlayer({
   const scrubbing = useRef(false);
 
   const [playing, setPlaying] = useState(true);
-  const [muted, setMuted] = useState(false);
+  const [muted, setMuted] = useState(true);
   const [current, setCurrent] = useState(0);
   const [duration, setDuration] = useState(0);
 
@@ -43,6 +43,12 @@ export default function VideoPlayer({
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
+
+    // 浏览器要求自动播放必须静音；React 的 JSX `muted` 不一定写入真实 DOM 属性，
+    // 这里手动强制静音并尝试播放，确保 Lightbox 打开即自动播放（用户可再点开声音）。
+    video.muted = true;
+    const tryPlay = video.play();
+    if (tryPlay && typeof tryPlay.catch === "function") tryPlay.catch(() => {});
 
     const onTime = () => setCurrent(video.currentTime);
     const onMeta = () => setDuration(video.duration || 0);
@@ -116,6 +122,7 @@ export default function VideoPlayer({
         poster={poster}
         autoPlay
         playsInline
+        muted
         preload="auto"
         onClick={togglePlay}
         className="h-full w-full object-contain"

@@ -21,11 +21,17 @@ vfx-portfolio/
 │   ├── page.tsx          # 首页：Hero + 画廊 + 页脚
 │   └── globals.css       # 全局样式 / 动画 / 滚动条
 ├── components/
-│   ├── Hero.tsx          # 全屏自动循环背景视频 + 居中姓名
+│   ├── Hero.tsx          # 全屏自动循环背景视频 + 居中姓名（SVG 玻璃字）
+│   ├── About.tsx         # 个人介绍页（头像 / 简介 / 技能）
 │   ├── Gallery.tsx       # 分类过滤 + 网格 + Lightbox 状态管理
-│   ├── FilterBar.tsx     # 分类标签（移动端可横滑）
-│   ├── ProjectCard.tsx   # 缩略图卡片（封面懒加载 + hover 播放按钮）
-│   └── Lightbox.tsx      # 沉浸式弹窗播放器 + 技术栈说明区
+│   ├── FilterBar.tsx     # 分类标签（液态玻璃条，移动端可横滑）
+│   ├── ProjectCard.tsx   # 缩略图卡片（封面懒加载 + hover 静音预览）
+│   ├── Lightbox.tsx      # 沉浸式弹窗播放器 + 技术栈说明区
+│   ├── VideoPlayer.tsx   # 自定义播放器（进度条 / 静音 / 空闲隐藏控件）
+│   ├── ParticleLayer.tsx # 粒子汇聚成字（作品集底部 2026VFX 签名）
+│   └── SmoothScroll.tsx  # Lenis 平滑滚动 + 锚点接管
+├── lib/
+│   └── lenis.ts          # Lenis 单例（供 Lightbox stop/start）
 ├── data/
 │   ├── site.ts           # ★ 你的名字 / 头衔 / 邮箱 / Showreel 路径
 │   └── projects.ts       # ★ 作品数据（标题、分类、描述、技术栈）
@@ -60,7 +66,7 @@ npm run build && npm start
 
 1. **个人信息**：编辑 `data/site.ts`（名字、头衔、邮箱、Showreel 路径）。
 2. **作品**：把视频放到 `public/videos/`、封面图放到 `public/posters/`，然后在 `data/projects.ts` 中增删改条目：
-   - `category` 对应分类 id（`houdini` / `ue5` / `nuke` / `render`），想加分类就在 `categories` 里加一条；
+   - `category` 对应分类 id（`project` / `practice`），想加分类就在 `categories` 里加一条；
    - `techStack` 就是播放器下方显示的技术栈标签（节点、渲染器、软件等）；
    - `video` / `poster` 改成你自己的文件名。
 3. **视频编码建议**（发给客户/制片前）：统一转成 H.264 + `-movflags +faststart`，浏览器兼容最好：
@@ -84,4 +90,4 @@ ffmpeg -i 原片.mov -c:v libx264 -preset slow -crf 20 -pix_fmt yuv420p -movflag
 
 - 画廊只加载封面图（懒加载），不预载视频；Lightbox 打开时才请求对应视频
 - 背景视频 `muted + loop + playsInline`，手机端自动播放无阻塞
-- `prefers-reduced-motion` 用户自动禁用动画
+- 动效默认全局开启（`MotionConfig reducedMotion="never"` + Lenis `respectReducedMotion:false`），未对系统「减少动画」做降级，按设计保留电影感动效

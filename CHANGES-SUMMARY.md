@@ -1,5 +1,12 @@
 # 个人网站升级 — 改动前后对比总结
 
+> ⚠️ **本文档反映早期基线（提交 `0e49601`）**，与当前 `main` 代码已有多处出入，请以 `README.md` 与源码为准。主要差异：
+> - 玻璃质感为**纯 CSS `backdrop-filter` 玻璃类**（`.glass-panel` 等），未使用 `@persian-caesar/liquid-glass` npm 包；
+> - 动效**全局开启**，未对 `prefers-reduced-motion` 降级（`MotionConfig reducedMotion="never"` + Lenis `respectReducedMotion:false`）；
+> - 平滑滚动使用 Lenis **lerp 模式**（`lerp:0.1`），非 `duration` 模式；
+> - 定制光标为 **CSS + PNG 热点**（`globals.css` 的 `hornet-*` cursor），无 `CustomCursor.tsx` 组件；
+> - 分类已简化为「项目 / 练习」两类；并已新增 About 页、ParticleLayer 粒子签名、VideoPlayer 自定义播放器。
+
 > 仓库：`SoulmatelynchVFX/vfx-portfolio` · 提交 `0e49601`（`feat(ui): 高级感视觉与微交互升级`）
 > 14 个文件 · +728 / -59 行 · 构建 ✅ · E2E 11/11 ✅
 

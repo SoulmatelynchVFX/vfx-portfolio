@@ -12,10 +12,6 @@ export const site = {
   heroVideo: "/videos/golden-wing.mp4",
   /** 背景视频首帧封面（加载前显示，避免黑屏闪烁） */
   heroPoster: "/posters/golden-wing.jpg",
-  /** 备用素材：Showreel 混剪，可作为第二屏 / Showreel 区块，非首屏主角 */
-  showreelVideo: "/videos/hero.mp4",
-  /** Showreel 混剪的封面图 */
-  showreelPoster: "/posters/hero.jpg",
   /** 首屏标题上方的小标签 */
   heroLabel: "Showreel — 2026",
   /** 页脚联系邮箱 */
@@ -24,7 +20,7 @@ export const site = {
   /** 关于页（占位信息，可替换为你自己的履历与头像） */
   about: {
     /** 头像路径（空字符串则使用 CSS 渐变占位） */
-    avatar: "",
+    avatar: "/avatars/avatar.jpg",
     /** 状态标签 */
     status: "可接项目 · 随时可聊",
     /** 经历/身份一句话 */

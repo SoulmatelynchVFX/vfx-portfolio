@@ -129,6 +129,7 @@
     border:1px solid rgba(255,255,255,0.18); box-shadow:0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.25); }
   .about-avatar .frame { position:relative; width:160px; aspect-ratio:1/1; border-radius:12px; overflow:hidden; background:#111; }
   @media (min-width:640px) { .about-avatar .frame { width:208px; } }
+  .about-avatar .avatar-img { width:100%; height:100%; object-fit:cover; object-position:center; display:block; }
   .about-avatar .placeholder { width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;
     background:linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.02)); }
   .about-avatar .placeholder span { font-family:-apple-system,"SF Pro Display","SF Pro Text","Helvetica Neue","Segoe UI",system-ui,sans-serif; color:rgba(255,255,255,0.30); font-size:32px; font-weight:300; }
@@ -214,10 +215,7 @@
       <div class="about-left">
         <div class="about-avatar">
           <div class="frame">
-            <div class="placeholder">
-              <span>头像</span>
-              <span class="sub">占位符</span>
-            </div>
+            <img src="/avatars/avatar.jpg" alt="Seal Wang" class="avatar-img">
           </div>
         </div>
         <h2 class="font-ios">Seal Wang</h2>

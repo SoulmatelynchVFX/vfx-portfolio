@@ -126,65 +126,30 @@ button,
   animation: fade-in-up 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* ============================================================
-   液态玻璃（Liquid Glass）文字 — 借鉴 nikdelvin/liquid-glass
-   与 LogRocket 纯 CSS/SVG 还原 iOS 26 材质的思路。仅作用于
-   首屏 Hero，零运行时依赖、跨浏览器稳定。
-   ============================================================ */
-
 /* iOS 系统字体栈：优先 SF Pro，其它平台回退到系统无衬线 */
 .font-ios {
   font-family: -apple-system, "SF Pro Display", "SF Pro Text",
     "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
 }
 
-/* 玻璃高光描边：内亮边 + 外柔影 + 整体光晕，模拟液态玻璃边缘反光。
-   不强设 color，由各元素自身透明度（text-white/...）决定填充，
-   从而保留标签 / 头衔 / 标语之间的层级差异；半透明填充 + 高亮描边
-   正是最接近 iOS 液态玻璃文字「透出底图、边缘发亮」的观感。 */
-.liquid-text {
-  text-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.55),
-    0 -1px 0 rgba(0, 0, 0, 0.25),
-    0 0 18px rgba(255, 255, 255, 0.25),
-    0 2px 14px rgba(0, 0, 0, 0.45);
-}
-
-/* 标题级：参考用户提供的「LIQUID」玻璃字效果——
-   内部极透、边缘锐利白描边 + 高光 / 阴影，呈现干净玻璃材质。
-   高光方向由 --glass-hx/--glass-hy 实时驱动（Hero 采样背景视频亮区），
-   使发光方向跟随视频画面移动（液态玻璃材质感）。保留当前 iOS/SF Pro 字体。 */
-/* 标题级液态玻璃：改用 SVG 三层描边浮雕（见 Hero.tsx），
-   此处只负责 SVG 容器的尺寸、字体与双投影。 */
 .stroke-title svg {
   width: min(92vw, 900px);
   height: auto;
   display: block;
   overflow: visible;
-  /* 双投影：上方一抹亮、下方一抹暗，让标题浮在视频之上 */
   filter:
     drop-shadow(0 -1px 3px rgba(255, 255, 255, 0.5))
     drop-shadow(0 3px 7px rgba(0, 0, 0, 0.55));
 }
 .stroke-title text {
-  font-family: -apple-system, "SF Pro Display", "SF Pro Text",
-    "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+  font-family: -apple-system, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
 }
-
-/* 标题背后一圈柔和玻璃光晕，增强材质存在感（非死板面板） */
-  .liquid-title-glow::before {
-    content: "";
-    position: absolute;
-    inset: -16% -10%;
-    background: radial-gradient(
-      60% 60% at 50% 50%,
-      rgba(255, 255, 255, 0.1),
-      transparent 72%
-    );
-    filter: blur(26px);
-    z-index: -1;
-    pointer-events: none;
-  }
+.hero-kicker,
+.hero-role,
+.hero-tagline {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.52);
+}
 
   /* 进入视口时淡入上移（作品区入场，配合 Reveal 客户端组件） */
   .reveal {
@@ -202,13 +167,14 @@ button,
      使用稳定的 CSS backdrop-filter，在暗色背景下也有清晰的玻璃质感：
      高模糊 + 饱和度提升 + 细亮边 + 顶部内高光 + 外部投影。 */
   .glass-panel {
-    background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(14px) saturate(160%);
-    -webkit-backdrop-filter: blur(14px) saturate(160%);
-    border: 1px solid rgba(255, 255, 255, 0.18);
+     background: linear-gradient(135deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.045));
+     backdrop-filter: blur(22px) saturate(140%);
+     -webkit-backdrop-filter: blur(22px) saturate(140%);
+     border: 1px solid rgba(235, 247, 255, 0.22);
     box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.45),
-      inset 0 1px 0 rgba(255, 255, 255, 0.25);
+       0 18px 48px rgba(0, 0, 0, 0.28),
+       inset 0 1px 0 rgba(255, 255, 255, 0.34),
+       inset 0 -1px 0 rgba(9, 19, 28, 0.16);
   }
 
   /* ---- 玻璃按钮（Lightbox 关闭/切换、VideoPlayer 控制按钮） ---- */
@@ -216,13 +182,13 @@ button,
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(12px) saturate(150%);
-    -webkit-backdrop-filter: blur(12px) saturate(150%);
-    border: 1px solid rgba(255, 255, 255, 0.22);
+     background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.06));
+     backdrop-filter: blur(18px) saturate(150%);
+     -webkit-backdrop-filter: blur(18px) saturate(150%);
+     border: 1px solid rgba(237, 248, 255, 0.27);
     box-shadow:
-      0 4px 16px rgba(0, 0, 0, 0.35),
-      inset 0 1px 0 rgba(255, 255, 255, 0.18);
+       0 8px 24px rgba(0, 0, 0, 0.22),
+       inset 0 1px 0 rgba(255, 255, 255, 0.32);
     color: rgba(255, 255, 255, 0.9);
     transition: all 0.2s ease;
   }
@@ -265,19 +231,67 @@ button,
 
   /* ---- 玻璃卡片（ProjectCard 画廊卡片） ---- */
   .glass-card {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(8px) saturate(140%);
+     background: linear-gradient(145deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.025));
+     backdrop-filter: blur(16px) saturate(140%);
     -webkit-backdrop-filter: blur(8px) saturate(140%);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+     border: 1px solid rgba(235, 247, 255, 0.18);
     box-shadow:
-      0 4px 20px rgba(0, 0, 0, 0.35),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+       0 12px 32px rgba(0, 0, 0, 0.28),
+       inset 0 1px 0 rgba(255, 255, 255, 0.22);
     transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   }
-  .glass-card:hover {
-    border-color: rgba(255, 255, 255, 0.28);
-    background: rgba(255, 255, 255, 0.06);
+.glass-card:hover {
+     border-color: rgba(224, 246, 255, 0.42);
+     background: linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(208, 235, 255, 0.07));
     box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.45),
-      inset 0 1px 0 rgba(255, 255, 255, 0.14);
+       0 18px 44px rgba(0, 0, 0, 0.38),
+       inset 0 1px 0 rgba(255, 255, 255, 0.28);
   }
+
+/* 编辑式作品画廊：影像成为主角，而不是被一层层玻璃卡片包裹。 */
+.project-frame {
+  background: #101419;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
+  transition: transform 700ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.portfolio-card:hover .project-frame {
+  transform: scale(0.985);
+  box-shadow: 0 28px 72px rgba(0, 0, 0, 0.48);
+}
+.portfolio-card:focus-visible {
+  outline: 1px solid rgba(219, 238, 255, 0.92);
+  outline-offset: 8px;
+}
+
+/* 内容区改用纸面般的留白和细线；玻璃限定为一层体验，而不是装饰语言。 */
+#about .glass-panel,
+#works .glass-panel {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: none;
+}
+#about .glass-panel {
+  border: 0;
+  padding: 0;
+}
+#about .glass-tag,
+#works .glass-button,
+#works .glass-tag {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+#works .glass-button:hover {
+  background: rgba(255, 255, 255, 0.94);
+}
+@media (min-width: 1024px) {
+  .portfolio-feature .project-frame {
+    aspect-ratio: 4 / 5;
+  }
+  .portfolio-feature h3 {
+    font-size: 1.5rem;
+  }
+}

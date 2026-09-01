@@ -3,7 +3,6 @@
 import About from "../components/About";
 import Hero from "../components/Hero";
 import Gallery from "../components/Gallery";
-import ParticleLayer from "../components/ParticleLayer";
 import { motion } from "framer-motion";
 import { projects } from "../data/projects";
 import { site } from "../data/site";
@@ -43,20 +42,6 @@ export default function Home() {
 
         <Gallery />
 
-        {/* 作品集底部：粒子签名 2026VFX（居中） */}
-        <div className="mt-20 flex justify-center">
-          <ParticleLayer
-            text="2026VFX"
-            fontSize={60}
-            fontWeight={600}
-            density={2}
-            speed={0.3}
-            repelStrength={0.2}
-            rainbow
-            flow
-            className="h-16 w-72 sm:h-20 sm:w-96"
-          />
-        </div>
       </section>
 
       <footer className="border-t border-white/10">

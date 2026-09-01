@@ -50,10 +50,14 @@ export default function Gallery() {
         initial="hidden"
         whileInView="show"
         viewport={{ once: false, amount: 0.1 }}
-        className="mt-8 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3"
+        className="portfolio-grid mt-10 grid grid-cols-1 gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-x-8 lg:gap-y-16"
       >
         {visible.map((project, i) => (
-          <motion.div key={project.id} variants={itemVariants}>
+          <motion.div
+            key={project.id}
+            variants={itemVariants}
+            className={i === 0 ? "portfolio-feature lg:col-span-7 lg:row-span-2" : "lg:col-span-5"}
+          >
             <ProjectCard project={project} onOpen={() => open(i)} />
           </motion.div>
         ))}

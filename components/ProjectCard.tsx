@@ -45,9 +45,9 @@ export default function ProjectCard({ project, onOpen }: ProjectCardProps) {
       onMouseLeave={handleLeave}
       data-cursor="play"
       aria-label={`播放作品：${project.title}`}
-      className="group block w-full text-left"
+      className="portfolio-card group block w-full text-left"
     >
-      <div className="glass-card relative aspect-video overflow-hidden rounded-2xl">
+      <div className="project-frame relative aspect-video overflow-hidden rounded-[2px]">
         {/* 封面图：悬停渐隐并轻微放大 */}
         <Image
           src={project.poster}
@@ -77,18 +77,18 @@ export default function ProjectCard({ project, onOpen }: ProjectCardProps) {
         {/* 轻微压暗层，保证时长标签可读 */}
         <div className="pointer-events-none absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/20" />
 
-        <span className="glass-tag absolute right-2 top-2 rounded-md px-1.5 py-0.5 text-[10px] tabular-nums text-white/85">
+        <span className="absolute right-3 top-3 border border-white/25 bg-black/25 px-2 py-1 text-[10px] tabular-nums tracking-[0.12em] text-white/85 backdrop-blur-sm">
           {project.duration}
         </span>
       </div>
 
-      <div className="mt-3 flex items-baseline justify-between gap-3">
-        <h3 className="truncate text-sm font-medium text-white">{project.title}</h3>
-        <span className="shrink-0 text-[10px] uppercase tracking-[0.2em] text-white/40">
+      <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-white/15 pt-3">
+        <h3 className="truncate text-base font-normal tracking-[-0.02em] text-white">{project.title}</h3>
+        <span className="shrink-0 text-[10px] uppercase tracking-[0.24em] text-white/45">
           {project.year}
         </span>
       </div>
-      <p className="mt-1 text-xs text-white/45">{categoryLabel}</p>
+      <p className="mt-1 text-[11px] uppercase tracking-[0.18em] text-white/45">{categoryLabel}</p>
     </button>
   );
 }

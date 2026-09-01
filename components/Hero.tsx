@@ -52,70 +52,6 @@ export default function Hero() {
     return () => v.removeEventListener("canplay", tryPlay);
   }, []);
 
-  // 液态玻璃高光：采样背景视频亮区重心，驱动标题三层浮雕的「亮边/暗边」偏移，
-  // 让玻璃质感随画面流动。低频采样（~11fps）控制开销，不读取全分辨率帧。
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    // 固定浮雕方向：光来自左上（与 SVG 三层描边的暗/亮边一致）
-    const titleDark = document.getElementById("title-dark");
-    const titleLight = document.getElementById("title-light");
-    const BASE_BX = 1.3;
-    const BASE_BY = 1.3;
-
-    const canvas = document.createElement("canvas");
-    canvas.width = 24;
-    canvas.height = 14; // 按 16:9 比例降采样，足够判断亮区方向
-    const ctx = canvas.getContext("2d", { willReadFrequently: true });
-    if (!ctx) return;
-
-    let raf = 0;
-    let last = 0;
-    const rootStyle = document.documentElement.style;
-
-    const sample = (t: number) => {
-      raf = requestAnimationFrame(sample);
-      if (v.paused || v.ended) return;
-      if (t - last < 90) return; // 约 11fps
-      last = t;
-      try {
-        ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
-        const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const W = canvas.width;
-        const H = canvas.height;
-        let gx = 0;
-        let gy = 0;
-        let n = 0;
-        for (let y = 0; y < H; y++) {
-          for (let x = 0; x < W; x++) {
-            const i = (y * W + x) * 4;
-            const lum = data[i] * 0.3 + data[i + 1] * 0.59 + data[i + 2] * 0.11;
-            gx += (x - W / 2) * lum;
-            gy += (y - H / 2) * lum;
-            n++;
-          }
-        }
-        // 亮区重心方向 -> 高光朝亮侧轻微游移（幅度小，仅作玻璃光泽呼吸）
-        const gxN = gx / n;
-        const gyN = gy / n;
-        const mag = Math.hypot(gxN, gyN) || 1;
-        const amp = Math.min(3, mag / 1500);
-        const vhx = (gxN / mag) * amp * 0.5;
-        const vhy = (gyN / mag) * amp * 0.5;
-        rootStyle.setProperty("--glass-hx", vhx.toFixed(2) + "px");
-        rootStyle.setProperty("--glass-hy", vhy.toFixed(2) + "px");
-        const bx = BASE_BX + vhx;
-        const by = BASE_BY + vhy;
-        titleDark?.setAttribute("transform", `translate(${bx.toFixed(2)}, ${by.toFixed(2)})`);
-        titleLight?.setAttribute("transform", `translate(${(-bx).toFixed(2)}, ${(-by).toFixed(2)})`);
-      } catch {
-        // 跨域或帧暂不可读时静默跳过，下一帧再试
-      }
-    };
-    raf = requestAnimationFrame(sample);
-    return () => cancelAnimationFrame(raf);
-  }, []);
-
   // 滚动视差：向下滚动时 Hero 标题与 meta 淡出上移，形成「镜头推远」的电影感。
   // 直接操作 DOM，不触发 React 重渲染（用户明确要动效，不跟随系统减少动画设置）。
   useEffect(() => {
@@ -195,14 +131,13 @@ export default function Hero() {
         aria-hidden="true"
       />
 
-      {/* 2. 压暗遮罩：上/下加重保证标签可读，中部仅轻压留给标题 */}
-      <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-b from-black/60 via-black/30 to-black/75" />
+      {/* 保持影像为主角：只用一层底片保证文字可读，不在内容上叠加装饰性玻璃。 */}
+      <div className="pointer-events-none absolute inset-0 z-10 bg-[linear-gradient(180deg,rgba(2,8,13,.62)_0%,rgba(3,8,12,.14)_44%,rgba(2,5,8,.76)_100%)]" />
 
-      {/* 3. 标题：SVG 纯描边浮雕玻璃字（字心透空 + 三层描边做立体边 + 双投影），
-              与下方小字拉开层级；浮雕高光方向由背景视频亮区驱动（见下方采样 effect） */}
+      {/* 3. 原始 SVG 三层描边玻璃字 */}
       <div
         data-parallax="title"
-        className="liquid-title-glow pointer-events-none absolute inset-0 z-20 flex items-center justify-center"
+        className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center px-6"
       >
         <motion.h1
           variants={titleItem}
@@ -211,72 +146,31 @@ export default function Hero() {
           className="font-ios stroke-title"
           aria-label={site.name}
         >
-          <svg
-            className="title-svg"
-            viewBox="0 0 800 130"
-            preserveAspectRatio="xMidYMid meet"
-            aria-hidden="true"
-          >
-            <text
-              id="title-dark"
-              x="400"
-              y="65"
-              textAnchor="middle"
-              dominantBaseline="central"
-              fill="none"
-              stroke="rgba(0,0,0,0.6)"
-              strokeWidth={1.8}
-              fontSize={84}
-              fontWeight={500}
-              letterSpacing="-0.02em"
-            >
+          <svg className="title-svg" viewBox="0 0 800 130" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <text x="400" y="65" textAnchor="middle" dominantBaseline="central" fill="none" stroke="rgba(0,0,0,0.6)" strokeWidth={1.8} fontSize={84} fontWeight={500} letterSpacing="-0.02em">
               {site.name}
             </text>
-            <text
-              id="title-base"
-              x="400"
-              y="65"
-              textAnchor="middle"
-              dominantBaseline="central"
-              fill="none"
-              stroke="rgba(255,255,255,0.6)"
-              strokeWidth={1.1}
-              fontSize={84}
-              fontWeight={500}
-              letterSpacing="-0.02em"
-            >
+            <text x="400" y="65" textAnchor="middle" dominantBaseline="central" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth={1.1} fontSize={84} fontWeight={500} letterSpacing="-0.02em">
               {site.name}
             </text>
-            <text
-              id="title-light"
-              x="400"
-              y="65"
-              textAnchor="middle"
-              dominantBaseline="central"
-              fill="none"
-              stroke="rgba(255,255,255,0.98)"
-              strokeWidth={0.5}
-              fontSize={84}
-              fontWeight={500}
-              letterSpacing="-0.02em"
-            >
+            <text x="400" y="65" textAnchor="middle" dominantBaseline="central" fill="none" stroke="rgba(255,255,255,0.98)" strokeWidth={0.5} fontSize={84} fontWeight={500} letterSpacing="-0.02em">
               {site.name}
             </text>
           </svg>
         </motion.h1>
       </div>
 
-      {/* 4. 标题上方标签（来自配置，液态玻璃文字） */}
+      {/* 4. 标题上方标签 */}
       <motion.p
         variants={item}
         initial="hidden"
         animate="show"
-        className="font-ios liquid-text absolute left-1/2 top-[18%] z-30 -translate-x-1/2 whitespace-nowrap text-[11px] uppercase tracking-[0.5em] text-white/70"
+        className="hero-kicker absolute left-1/2 top-[18%] z-30 -translate-x-1/2 whitespace-nowrap text-[10px] uppercase tracking-[0.32em] text-white/70 sm:text-[11px]"
       >
         {site.heroLabel}
       </motion.p>
 
-      {/* 5. 标题下方头衔 + 标语（液态玻璃文字） */}
+      {/* 5. 标题下方头衔 + 标语 */}
       <motion.div
         data-parallax="meta"
         variants={container}
@@ -286,13 +180,13 @@ export default function Hero() {
       >
         <motion.p
           variants={item}
-          className="font-ios liquid-text whitespace-nowrap text-xs uppercase tracking-[0.45em] text-white/90 sm:text-sm"
+          className="hero-role whitespace-nowrap text-xs font-medium uppercase tracking-[0.22em] text-white/90 sm:text-sm"
         >
           {site.role}
         </motion.p>
         <motion.p
           variants={item}
-          className="font-ios liquid-text mt-3 whitespace-nowrap text-[11px] uppercase tracking-[0.3em] text-white/55"
+          className="hero-tagline mt-2.5 whitespace-nowrap text-[10px] uppercase tracking-[0.16em] text-white/60 sm:text-[11px]"
         >
           {site.tagline}
         </motion.p>

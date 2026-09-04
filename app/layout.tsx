@@ -9,6 +9,10 @@ export const metadata: Metadata = {
   title: `${site.name} — VFX Artist`,
   description:
     "个人视觉特效（VFX）与三维渲染作品集：Houdini 粒子与流体 / UE5 实时渲染 / Nuke 影视合成。",
+  icons: {
+    icon: [{ url: "/seal-wang-vfx-icon.png", type: "image/png" }],
+    apple: [{ url: "/seal-wang-vfx-icon.png", type: "image/png" }],
+  },
   openGraph: {
     title: `${site.name} — VFX Artist`,
     description:

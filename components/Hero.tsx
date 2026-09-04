@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, type Variants } from "framer-motion";
-import { ParticleDrift } from "@designcodeio/threeui/components/ParticleDrift";
 import { site } from "../data/site";
+import HeroParticles from "./HeroParticles";
 
 const container: Variants = {
   hidden: {},
@@ -23,16 +23,23 @@ const titleItem: Variants = {
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const heroRef = useRef<HTMLElement>(null);
+  const [particlesActive, setParticlesActive] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
     video.muted = true;
     video.loop = true;
-    const play = () => void video.play().catch(() => {});
+    const activateParticles = () => setParticlesActive(true);
+    const play = () => void video.play().then(activateParticles).catch(() => {});
     play();
     video.addEventListener("canplay", play, { once: true });
-    return () => video.removeEventListener("canplay", play);
+    video.addEventListener("playing", activateParticles, { once: true });
+    if (!video.paused) activateParticles();
+    return () => {
+      video.removeEventListener("canplay", play);
+      video.removeEventListener("playing", activateParticles);
+    };
   }, []);
 
   useEffect(() => {
@@ -68,17 +75,12 @@ export default function Hero() {
         loop
         playsInline
         preload="metadata"
+        onPlaying={() => setParticlesActive(true)}
         aria-hidden="true"
       />
-      <ParticleDrift
-        className="hero-particle-drift absolute inset-0 z-[5] h-full w-full"
-        mode="dark"
-        speed={0.28}
-        density={0.3}
-        length={0.7}
-        size={0.65}
-        opacity={0.62}
-      />
+      <div className="pointer-events-none absolute inset-0 z-[5]">
+        <HeroParticles active={particlesActive} />
+      </div>
       <div className="pointer-events-none absolute inset-0 z-10 bg-[linear-gradient(180deg,rgba(2,8,13,.62)_0%,rgba(3,8,12,.14)_44%,rgba(2,5,8,.76)_100%)]" />
 
       <nav aria-label="主页导航" className="absolute inset-x-4 top-4 z-30 mx-auto flex max-w-7xl items-center justify-between sm:inset-x-6 sm:top-6 lg:px-2">
@@ -88,12 +90,22 @@ export default function Hero() {
         </a>
       </nav>
 
-      <div data-parallax="title" className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center px-6">
+      <div data-parallax="title" className="hero-title-stage pointer-events-none absolute inset-0 z-20 flex items-center justify-center px-6">
         <motion.h1 variants={titleItem} initial="hidden" animate="show" className="font-ios stroke-title" aria-label={site.name}>
-          <svg className="title-svg" viewBox="0 0 800 130" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-            <text x="400" y="65" textAnchor="middle" dominantBaseline="central" fill="none" stroke="rgba(0,0,0,0.6)" strokeWidth={1.8} fontSize={84} fontWeight={500} letterSpacing="-0.02em">{site.name}</text>
-            <text x="400" y="65" textAnchor="middle" dominantBaseline="central" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth={1.1} fontSize={84} fontWeight={500} letterSpacing="-0.02em">{site.name}</text>
-            <text x="400" y="65" textAnchor="middle" dominantBaseline="central" fill="none" stroke="rgba(255,255,255,0.98)" strokeWidth={0.5} fontSize={84} fontWeight={500} letterSpacing="-0.02em">{site.name}</text>
+          <svg className="title-svg" viewBox="0 0 800 160" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <g className="hero-title-desktop">
+              <text x="278" y="52" textAnchor="middle" dominantBaseline="central" fill="none" stroke="rgba(0,0,0,0.6)" strokeWidth={1.8} fontSize={78} fontWeight={500} letterSpacing="-0.02em">Seal</text>
+              <text x="278" y="52" textAnchor="middle" dominantBaseline="central" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth={1.1} fontSize={78} fontWeight={500} letterSpacing="-0.02em">Seal</text>
+              <text x="278" y="52" textAnchor="middle" dominantBaseline="central" fill="none" stroke="rgba(255,255,255,0.98)" strokeWidth={0.5} fontSize={78} fontWeight={500} letterSpacing="-0.02em">Seal</text>
+              <text x="520" y="119" textAnchor="middle" dominantBaseline="central" fill="none" stroke="rgba(0,0,0,0.6)" strokeWidth={1.8} fontSize={78} fontWeight={500} letterSpacing="-0.02em">Wang</text>
+              <text x="520" y="119" textAnchor="middle" dominantBaseline="central" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth={1.1} fontSize={78} fontWeight={500} letterSpacing="-0.02em">Wang</text>
+              <text x="520" y="119" textAnchor="middle" dominantBaseline="central" fill="none" stroke="rgba(255,255,255,0.98)" strokeWidth={0.5} fontSize={78} fontWeight={500} letterSpacing="-0.02em">Wang</text>
+            </g>
+            <g className="hero-title-mobile">
+              <text x="400" y="80" textAnchor="middle" dominantBaseline="central" fill="none" stroke="rgba(0,0,0,0.6)" strokeWidth={1.8} fontSize={84} fontWeight={500} letterSpacing="-0.02em">{site.name}</text>
+              <text x="400" y="80" textAnchor="middle" dominantBaseline="central" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth={1.1} fontSize={84} fontWeight={500} letterSpacing="-0.02em">{site.name}</text>
+              <text x="400" y="80" textAnchor="middle" dominantBaseline="central" fill="none" stroke="rgba(255,255,255,0.98)" strokeWidth={0.5} fontSize={84} fontWeight={500} letterSpacing="-0.02em">{site.name}</text>
+            </g>
           </svg>
         </motion.h1>
       </div>

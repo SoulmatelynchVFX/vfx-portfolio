@@ -18,6 +18,29 @@ const item: Variants = {
   },
 };
 
+const capabilities = [
+  {
+    index: "01",
+    title: "影视与实时 VFX / TD",
+    copy: "以 Houdini 为核心，覆盖 VEX 属性控制、FLIP / POP / Vellum 解算，以及 CHOPs 数据处理；熟悉 Solaris（USD）、Karma 与 MaterialX 流程。",
+  },
+  {
+    index: "02",
+    title: "实时资产与引擎管线",
+    copy: "打通 Houdini 至 UE5 的资产落地，使用 SideFX Labs VAT 与 FBX 流程，将动态网格、骨骼和粒子效果转化为高性能实时内容。",
+  },
+  {
+    index: "03",
+    title: "合成与镜头交付",
+    copy: "使用 Nuke 完成节点式合成与多通道输出，专注 Alpha 精准控制、通道管理和自定义 Gizmo 的最终效果调优。",
+  },
+  {
+    index: "04",
+    title: "开发与 AI 自动化",
+    copy: "以 Next.js、React、TypeScript 和 Tailwind 构建展示体验；使用 Tauri、Rust 与 AI Agent / ComfyUI 工作流，持续拓展 CG 制作管线。",
+  },
+];
+
 /**
  * 个人介绍页（占位效果）：
  * - 左侧头像 + 姓名 / 头衔 / 经历 / 座右铭
@@ -125,7 +148,21 @@ export default function About() {
 
             <motion.div variants={item} className="mt-10">
               <p className="text-[11px] uppercase tracking-[0.4em] text-white/40">
-                技能
+                能力图谱
+              </p>
+              <div className="about-capabilities mt-5">
+                {capabilities.map((capability) => (
+                  <article key={capability.index} className="about-capability">
+                    <h3>{capability.title}</h3>
+                    <p>{capability.copy}</p>
+                  </article>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div variants={item} className="mt-9">
+              <p className="text-[11px] uppercase tracking-[0.4em] text-white/40">
+                工具与技术
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {about.skills.map((skill) => (

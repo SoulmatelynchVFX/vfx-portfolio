@@ -23,8 +23,8 @@ export default function Contact() {
           viewport={{ once: true, amount: 0.35 }}
           transition={{ delay: 0.08, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          让下一个镜头，
-          <span>比想象更有力。</span>
+          让下一个镜头
+          <span>比想象更有力</span>
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 18 }}

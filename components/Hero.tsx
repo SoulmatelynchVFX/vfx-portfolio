@@ -74,7 +74,7 @@ export default function Hero() {
       <nav aria-label="主页导航" className="absolute inset-x-4 top-4 z-30 mx-auto flex max-w-7xl items-center justify-between sm:inset-x-6 sm:top-6 lg:px-2">
         <span className="film-wordmark">SW / VFX</span>
         <a href="#about" data-cursor="link" className="film-nav-link">
-          关于 <span aria-hidden="true">↓</span>
+          关于
         </a>
       </nav>
 

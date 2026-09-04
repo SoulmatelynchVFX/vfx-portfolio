@@ -24,15 +24,15 @@ export const site = {
     /** 状态标签 */
     status: "可接项目 · 随时可聊",
     /** 经历/身份一句话 */
-    experience: "Senior VFX Artist · 曾参与多部广告与游戏过场",
+    experience: "VFX & Technical Director · Houdini / UE5 / Nuke",
     /** 个人简介段落 */
     bio: [
-      "专注于影视级特效与实时渲染，热衷于在粒子、流体与光影之间寻找戏剧性的瞬间。",
-      "擅长 Houdini 程序化特效、UE5 实时渲染与 Nuke 合成，习惯以导演思维拆解镜头，用技术手段放大情绪。",
+      "以影视与实时视觉特效为核心，将程序化制作、实时引擎与后期合成放在同一条可交付的管线里。",
+      "我既关注镜头中的情绪与细节，也关注数据、性能与复用性；用工程化思维，让复杂效果真正进入项目。",
     ],
     /** 座右铭/个人标签 */
-    motto: "特效是叙事的延长线。",
+    motto: "让技术服务于镜头，让镜头留下情绪。",
     /** 技能标签 */
-    skills: ["Houdini", "UE5", "Nuke", "Redshift", "Karma", "VEX", "Niagara", "Python"],
+    skills: ["Houdini", "VEX", "Solaris / USD", "Karma", "MaterialX", "UE5", "VAT", "Nuke", "Next.js", "Rust", "AI Workflows"],
   },
 } as const;

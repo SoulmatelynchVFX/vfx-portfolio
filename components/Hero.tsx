@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { motion, type Variants } from "framer-motion";
+import { ParticleDrift } from "@designcodeio/threeui/components/ParticleDrift";
 import { site } from "../data/site";
 
 const container: Variants = {
@@ -68,6 +69,15 @@ export default function Hero() {
         playsInline
         preload="metadata"
         aria-hidden="true"
+      />
+      <ParticleDrift
+        className="hero-particle-drift absolute inset-0 z-[5] h-full w-full"
+        mode="dark"
+        speed={0.28}
+        density={0.3}
+        length={0.7}
+        size={0.65}
+        opacity={0.62}
       />
       <div className="pointer-events-none absolute inset-0 z-10 bg-[linear-gradient(180deg,rgba(2,8,13,.62)_0%,rgba(3,8,12,.14)_44%,rgba(2,5,8,.76)_100%)]" />
 

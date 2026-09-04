@@ -48,7 +48,15 @@ export default function ProjectCard({ project, index, onOpen }: ProjectCardProps
       aria-label={`播放作品：${project.title}`}
       className="portfolio-card group block w-full text-left"
     >
-      <div className="project-frame relative aspect-video overflow-hidden rounded-[2px]">
+      <div className="project-note-card">
+        <div className="project-note-heading">
+          <p>
+            作品记录 {String(index).padStart(2, "0")} <span>· {project.year}</span>
+          </p>
+          <h3>{project.title}</h3>
+        </div>
+
+        <div className="project-frame relative aspect-[16/10] overflow-hidden">
         {/* 封面图：悬停渐隐并轻微放大 */}
         <Image
           src={project.poster}
@@ -75,24 +83,17 @@ export default function ProjectCard({ project, index, onOpen }: ProjectCardProps
           }`}
         />
 
-        {/* 轻微压暗层，保证时长标签可读 */}
-        <div className="pointer-events-none absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/20" />
+          {/* 轻微压暗层，保证播放入口可读 */}
+          <div className="pointer-events-none absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/20" />
 
-        <span className="absolute left-3 top-3 text-[10px] font-medium tabular-nums tracking-[0.18em] text-white/80">
-          {String(index).padStart(2, "0")}
-        </span>
-        <span className="absolute right-3 top-3 border border-white/25 bg-black/25 px-2 py-1 text-[10px] tabular-nums tracking-[0.12em] text-white/85 backdrop-blur-sm">
-          {project.duration}
-        </span>
-      </div>
+          <span className="project-play-mark" aria-hidden="true">↗</span>
+        </div>
 
-      <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-white/15 pt-3">
-        <h3 className="truncate text-base font-normal tracking-[-0.02em] text-white">{project.title}</h3>
-        <span className="shrink-0 text-[10px] uppercase tracking-[0.24em] text-white/45">
-          {project.year}
-        </span>
+        <div className="project-note-meta">
+          <span>{categoryLabel}</span>
+          <span>{project.duration}</span>
+        </div>
       </div>
-      <p className="mt-1 text-[11px] uppercase tracking-[0.18em] text-white/45">{categoryLabel}</p>
     </button>
   );
 }

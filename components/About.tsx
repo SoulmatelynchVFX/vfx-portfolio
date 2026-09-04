@@ -176,11 +176,11 @@ export default function About() {
               </div>
             </motion.div>
 
-            <motion.div variants={item} className="mt-10">
+            <motion.div variants={item} className="mt-8">
               <a
                 href="#works"
                 data-cursor="link"
-                className="section-next"
+                className="section-next about-next"
               >
                 <span className="section-next-dot" aria-hidden="true" />
                 <strong>查看精选作品</strong>

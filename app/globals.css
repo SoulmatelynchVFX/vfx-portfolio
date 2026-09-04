@@ -151,6 +151,79 @@ button,
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.52);
 }
 
+/* 电影片头式导航与来自 Galaxy 的发光交互：只用在一个主操作上，避免装饰泛滥。 */
+.film-wordmark,
+.film-nav-link,
+.gallery-toolbar > p {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.film-wordmark {
+  color: rgba(255, 255, 255, 0.86);
+}
+.film-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: rgba(255, 255, 255, 0.72);
+  transition: color 220ms ease;
+}
+.film-nav-link:hover { color: #fff; }
+.reel-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  border: 1px solid rgba(214, 240, 255, 0.44);
+  border-radius: 999px;
+  padding: 0.72rem 1rem;
+  color: rgba(245, 251, 255, 0.94);
+  background: rgba(9, 17, 25, 0.34);
+  backdrop-filter: blur(12px) saturate(125%);
+  -webkit-backdrop-filter: blur(12px) saturate(125%);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.2), 0 12px 34px rgba(0, 0, 0, 0.22);
+  font: 600 11px/1 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1), background 280ms ease, box-shadow 280ms ease;
+}
+.reel-cta:hover {
+  transform: translateX(-50%) translateY(-2px);
+  background: rgba(220, 244, 255, 0.16);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.36), 0 0 0 5px rgba(149, 215, 255, 0.08), 0 20px 44px rgba(0, 0, 0, 0.34);
+}
+.reel-cta-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: #c9efff;
+  box-shadow: 0 0 0 4px rgba(201, 239, 255, 0.12), 0 0 18px rgba(155, 225, 255, 0.8);
+}
+.reel-cta-arrow { transition: transform 280ms ease; }
+.reel-cta:hover .reel-cta-arrow { transform: translateX(3px); }
+
+.gallery-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.gallery-toolbar > p { color: rgba(255, 255, 255, 0.42); }
+.film-filter {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.035);
+}
+.film-filter-button { border-radius: 999px; }
+.film-filter-active {
+  background: rgba(235, 249, 255, 0.96);
+  color: #071018;
+  box-shadow: 0 1px 8px rgba(193, 233, 255, 0.24);
+}
+
   /* 进入视口时淡入上移（作品区入场，配合 Reveal 客户端组件） */
   .reveal {
     opacity: 0;
@@ -254,6 +327,16 @@ button,
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
   transition: transform 700ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 700ms cubic-bezier(0.16, 1, 0.3, 1);
 }
+.project-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 25%, rgba(220, 247, 255, 0.18) 49%, transparent 66%);
+  transform: translateX(-125%);
+  transition: transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+.portfolio-card:hover .project-frame::after { transform: translateX(125%); }
 .portfolio-card:hover .project-frame {
   transform: scale(0.985);
   box-shadow: 0 28px 72px rgba(0, 0, 0, 0.48);
@@ -294,4 +377,459 @@ button,
   .portfolio-feature h3 {
     font-size: 1.5rem;
   }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reel-cta,
+  .reel-cta-arrow,
+  .project-frame,
+  .project-frame::after { transition: none; }
+  .project-frame::after { display: none; }
+}
+
+/* --------------------------------------------------------------------------
+   Portfolio 2026: cinematic editorial system
+   Reference cues: full-bleed image, restrained glass chrome, acid signal color,
+   oversized display type, and a visible work index.                              */
+:root {
+  --folio-bg: #050505;
+  --folio-panel: #101010;
+  --folio-ink: #f7f7f1;
+  --folio-muted: rgba(247, 247, 241, 0.62);
+  --folio-line: rgba(247, 247, 241, 0.14);
+  --folio-acid: #c7ff3d;
+  --folio-page: clamp(20px, 4vw, 74px);
+  --folio-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+.folio-page {
+  overflow: clip;
+  background:
+    radial-gradient(circle at 84% 10%, rgba(199, 255, 61, 0.07), transparent 24rem),
+    var(--folio-bg);
+  color: var(--folio-ink);
+}
+.folio-hero {
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  overflow: hidden;
+  background: var(--folio-bg);
+}
+.folio-hero-video {
+  position: absolute;
+  z-index: -3;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 42%;
+  filter: brightness(0.76) saturate(0.88) contrast(1.04);
+  transform: scale(1.035);
+}
+.folio-hero-shade {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(5, 5, 5, 0.74), rgba(5, 5, 5, 0.28) 58%, rgba(5, 5, 5, 0.04)),
+    linear-gradient(180deg, rgba(5, 5, 5, 0.04), transparent 45%, rgba(5, 5, 5, 0.94));
+}
+.folio-hero::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  opacity: 0.22;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 96px 96px;
+  -webkit-mask-image: linear-gradient(90deg, #000, transparent 72%);
+  mask-image: linear-gradient(90deg, #000, transparent 72%);
+}
+.folio-nav {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 22px;
+  width: min(1160px, calc(100vw - 32px));
+  min-height: 58px;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.19);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(5, 5, 5, 0.59));
+  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.32), inset 0 1px rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(22px) saturate(1.15);
+  -webkit-backdrop-filter: blur(22px) saturate(1.15);
+  transform: translateX(-50%);
+}
+.folio-nav a { font: 700 11px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0.1em; text-transform: uppercase; }
+.folio-nav-mark {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--folio-ink);
+  color: var(--folio-bg);
+}
+.folio-nav-links { display: flex; justify-content: center; gap: clamp(18px, 4vw, 54px); color: rgba(255, 255, 255, 0.65); }
+.folio-nav-links a { transition: color 220ms var(--folio-ease); }
+.folio-nav-links a:hover { color: var(--folio-ink); }
+.folio-nav-contact { padding: 13px 16px; border: 1px solid var(--folio-line); border-radius: 999px; color: var(--folio-ink); transition: background 220ms var(--folio-ease), color 220ms var(--folio-ease); }
+.folio-nav-contact:hover { background: var(--folio-acid); color: #101700; }
+.folio-hero-content {
+  width: min(1280px, calc(100vw - var(--folio-page) * 2));
+  margin: 0 auto;
+  padding-top: clamp(148px, 20vh, 220px);
+}
+.folio-eyebrow,
+.folio-section-index {
+  margin: 0;
+  color: var(--folio-acid);
+  font: 800 11px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.folio-hero h1 {
+  max-width: 980px;
+  margin: 22px 0 0;
+  color: var(--folio-ink);
+  font: 900 clamp(4.9rem, 12vw, 11.5rem) / 0.77 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: -0.085em;
+}
+.folio-hero h1 span { display: block; color: rgba(247, 247, 241, 0.78); }
+.folio-hero-role {
+  max-width: 590px;
+  margin: 30px 0 0;
+  color: rgba(247, 247, 241, 0.82);
+  font: 600 clamp(1.08rem, 1.65vw, 1.4rem) / 1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.folio-metrics { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.folio-metrics span {
+  display: inline-flex;
+  gap: 7px;
+  padding: 10px 12px;
+  border: 1px solid var(--folio-line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(247, 247, 241, 0.76);
+  font: 600 11px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.folio-metrics b { color: var(--folio-acid); }
+.folio-work-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 28px;
+  padding: 14px 17px;
+  border: 1px solid rgba(199, 255, 61, 0.52);
+  border-radius: 999px;
+  background: rgba(199, 255, 61, 0.1);
+  color: var(--folio-acid);
+  font: 800 11px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  transition: transform 240ms var(--folio-ease), background 240ms var(--folio-ease), color 240ms var(--folio-ease);
+}
+.folio-work-cta:hover { transform: translateY(-3px); background: var(--folio-acid); color: #101700; }
+.folio-reel {
+  position: absolute;
+  right: max(20px, calc((100vw - 1280px) / 2));
+  bottom: 26px;
+  width: min(490px, 42vw);
+}
+.folio-reel > p { margin: 0 0 10px; color: rgba(247, 247, 241, 0.58); font: 800 10px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0.14em; text-transform: uppercase; }
+.folio-reel-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.folio-reel-card { position: relative; aspect-ratio: 1.2 / 1; overflow: hidden; border: 1px solid var(--folio-line); border-radius: 13px; background: var(--folio-panel); }
+.folio-reel-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 35%, rgba(5, 5, 5, 0.84)); }
+.folio-reel-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.62; transition: transform 500ms var(--folio-ease), opacity 500ms var(--folio-ease); }
+.folio-reel-card:hover img { transform: scale(1.08); opacity: 1; }
+.folio-reel-card span, .folio-reel-card strong { position: absolute; z-index: 1; left: 10px; color: var(--folio-ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+.folio-reel-card span { top: 10px; font-size: 10px; font-weight: 800; }
+.folio-reel-card strong { right: 8px; bottom: 9px; overflow: hidden; font-size: 11px; line-height: 1.1; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Profile and selected work use wide editorial spacing instead of isolated cards. */
+.folio-about { background: var(--folio-bg) !important; }
+.folio-about .glass-panel { border: 1px solid var(--folio-line) !important; border-radius: 20px !important; background: rgba(255, 255, 255, 0.035) !important; }
+.folio-about-name { color: var(--folio-ink); font: 800 clamp(3.2rem, 6vw, 6.2rem) / 0.88 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: -0.07em; }
+.folio-about-role { color: var(--folio-muted); font: 800 11px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0.13em; text-transform: uppercase; }
+.folio-about-statement { max-width: 850px; margin: 16px 0 0; color: var(--folio-ink); font: 750 clamp(2.4rem, 4.6vw, 5.3rem) / 0.93 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: -0.065em; }
+.folio-about-statement em, .folio-section-title em { color: var(--folio-acid); font-style: normal; }
+.folio-about-copy { max-width: 760px; color: var(--folio-muted); font-size: 1rem; line-height: 1.8; }
+.folio-about .glass-tag { border-color: var(--folio-line); background: rgba(255, 255, 255, 0.055); }
+.folio-about .glass-button:hover { background: var(--folio-acid); color: #101700; }
+#works { max-width: 1280px; padding-top: clamp(96px, 12vw, 170px); padding-bottom: clamp(96px, 12vw, 170px); }
+.folio-section-title { max-width: 780px; margin: 14px 0 0; color: var(--folio-ink); font: 800 clamp(3rem, 6.2vw, 6.9rem) / 0.86 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: -0.075em; }
+.folio-work-count { color: var(--folio-muted); font: 800 11px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0.13em; text-transform: uppercase; }
+.gallery-toolbar { margin-top: 8px; padding-top: 20px; border-top: 1px solid var(--folio-line); }
+.gallery-toolbar > p { color: var(--folio-acid); }
+.film-filter { border-color: var(--folio-line); background: rgba(255, 255, 255, 0.035); }
+.film-filter-active { background: var(--folio-acid); color: #101700; box-shadow: none; }
+.project-frame { border: 1px solid var(--folio-line); border-radius: 18px !important; box-shadow: none; }
+.portfolio-card:hover .project-frame { box-shadow: 0 26px 72px rgba(0, 0, 0, 0.36); }
+.portfolio-card h3 { color: var(--folio-ink); font-weight: 650; }
+.folio-footer { border-top: 1px solid var(--folio-line); background: #080808; }
+.folio-footer a:hover { color: var(--folio-acid) !important; }
+@media (max-width: 760px) {
+  .folio-nav { top: 12px; min-height: 54px; grid-template-columns: auto 1fr auto; gap: 12px; }
+  .folio-nav-links { gap: 16px; }
+  .folio-nav-contact { padding: 11px 12px; }
+  .folio-hero-content { padding-top: 132px; }
+  .folio-hero h1 { font-size: clamp(4.4rem, 22vw, 7.2rem); }
+  .folio-hero-role { max-width: 19rem; margin-top: 24px; font-size: 1rem; }
+  .folio-metrics span { font-size: 10px; }
+  .folio-reel { right: 20px; bottom: 18px; left: 20px; width: auto; }
+  .folio-reel-card { border-radius: 10px; }
+  .folio-about-statement { font-size: clamp(2.7rem, 13vw, 4.2rem); }
+}
+
+/* Studio layout — a calmer, editorial three-column composition. */
+:root {
+  --studio-bg: #05070b;
+  --studio-text: #f4f5f7;
+  --studio-muted: rgba(244, 245, 247, 0.7);
+  --studio-line: rgba(255, 255, 255, 0.09);
+  --studio-accent: #ff5a42;
+  --studio-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+.folio-page {
+  background:
+    radial-gradient(circle at top right, rgba(110, 166, 255, 0.13), transparent 28%),
+    radial-gradient(circle at 10% 12%, rgba(201, 171, 111, 0.07), transparent 22%),
+    linear-gradient(180deg, #05070b, #070a12 38%, #04060a);
+}
+.studio-shell { width: min(1700px, calc(100vw - 80px)); margin: 0 auto; }
+.studio-hero {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  background: #060709;
+  color: var(--studio-text);
+}
+.studio-hero::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  right: 40px;
+  bottom: 34px;
+  left: 40px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent);
+}
+.studio-hero-video,
+.studio-hero-vignette,
+.studio-hero-grain { position: absolute; inset: 0; }
+.studio-hero-video { width: 100%; height: 100%; object-fit: cover; opacity: 0.72; filter: grayscale(0.3) saturate(0.84) contrast(1.08) brightness(0.6); transform: scale(1.07); }
+.studio-hero-vignette {
+  background:
+    linear-gradient(180deg, rgba(3, 4, 6, 0.16), rgba(4, 6, 10, 0.76)),
+    linear-gradient(90deg, rgba(4, 6, 10, 0.72), rgba(4, 6, 10, 0.16) 33%, rgba(4, 6, 10, 0.12) 58%, rgba(4, 6, 10, 0.62)),
+    radial-gradient(circle at 36% 18%, rgba(255, 90, 66, 0.13), transparent 18%);
+}
+.studio-hero-grain {
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.15) 0 0.7px, transparent 1px),
+    linear-gradient(120deg, rgba(255, 255, 255, 0.035), transparent 34%, rgba(255, 255, 255, 0.035) 66%, transparent 100%);
+  background-size: 4px 4px, auto;
+  mix-blend-mode: overlay;
+  opacity: 0.25;
+}
+.studio-hero-shell { position: relative; z-index: 1; display: flex; min-height: 100svh; flex-direction: column; padding: 22px 0 42px; }
+.studio-topbar { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 30px; }
+.studio-brand { display: inline-flex; align-items: center; gap: 14px; }
+.studio-brand span { display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; background: var(--studio-accent); color: #100b0a; font: 800 10px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0.12em; }
+.studio-brand strong,
+.studio-nav-links a,
+.studio-topbar-actions,
+.studio-hero-kicker-row { font: 700 11px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0.17em; text-transform: uppercase; }
+.studio-brand strong { color: var(--studio-text); }
+.studio-nav-links { display: flex; justify-content: center; gap: clamp(22px, 4vw, 52px); }
+.studio-nav-links a { color: rgba(244,245,247,0.67); transition: color 180ms ease; }
+.studio-nav-links a:hover { color: var(--studio-text); }
+.studio-topbar-actions { display: inline-flex; align-items: center; gap: 22px; color: rgba(244,245,247,0.54); }
+.studio-topbar-actions a { padding: 13px 17px; border: 1px solid var(--studio-line); border-radius: 12px; color: var(--studio-text); transition: transform 180ms ease, border-color 180ms ease, background 180ms ease; }
+.studio-topbar-actions a:hover { transform: translateY(-2px); border-color: rgba(255,90,66,0.5); background: rgba(255,90,66,0.12); }
+.studio-hero-content { display: flex; flex: 1; flex-direction: column; justify-content: space-between; padding: 38px 0 18px; }
+.studio-hero-kicker-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; color: rgba(244,245,247,0.82); }
+.studio-hero-kicker-row p { margin: 0; }
+.studio-hero-lower { display: grid; grid-template-columns: 220px minmax(580px, 1fr) 230px; gap: 36px; align-items: end; margin-top: auto; }
+.studio-hero-impact { padding-bottom: 14px; }
+.studio-hero-impact strong { display: block; color: var(--studio-accent); font: 800 clamp(4rem, 7vw, 6.6rem)/0.88 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: -0.09em; }
+.studio-hero-impact p { max-width: 190px; margin: 10px 0 0; color: rgba(244,245,247,0.8); font-size: 1rem; line-height: 1.5; }
+.studio-hero-main-copy { justify-self: center; width: min(100%, 860px); }
+.studio-hero-main-copy h1 { display: grid; gap: 0; margin: 0 0 28px; color: rgba(255,255,255,0.96); font: 800 clamp(5rem, 10vw, 9.7rem)/0.79 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: -0.075em; text-transform: uppercase; }
+.studio-hero-main-copy h1 span { display: block; }
+.studio-hero-main-copy > p { max-width: 620px; margin: 0; color: rgba(244,245,247,0.75); font-size: 1.05rem; line-height: 1.75; }
+.studio-hero-actions { display: flex; gap: 14px; margin-top: 28px; }
+.studio-primary-action,
+.studio-secondary-action { padding: 16px 20px; border-radius: 12px; font-size: 0.9rem; font-weight: 700; transition: transform 180ms ease, background 180ms ease, border-color 180ms ease; }
+.studio-primary-action { border: 1px solid rgba(255,255,255,0.24); background: #efe7db; color: #101010; }
+.studio-secondary-action { border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.03); color: rgba(244,245,247,0.82); }
+.studio-primary-action:hover,
+.studio-secondary-action:hover { transform: translateY(-2px); }
+.studio-secondary-action:hover { border-color: rgba(255,90,66,0.52); background: rgba(255,90,66,0.1); }
+.studio-hero-side-note { align-self: end; padding-bottom: 12px; }
+.studio-hero-side-note > span,
+.studio-hero-side-note > strong { display: block; font: 800 clamp(1.45rem, 2.2vw, 2.15rem)/0.94 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: -0.05em; text-transform: uppercase; }
+.studio-hero-side-note > span { color: var(--studio-accent); }
+.studio-hero-side-note > strong { color: var(--studio-text); }
+.studio-hero-side-note p { margin: 14px 0 0; color: rgba(244,245,247,0.64); line-height: 1.7; }
+
+/* Carry the reference site's blue-black, warm-paper, orange-accent rhythm through the content. */
+.folio-about { background: transparent !important; }
+.folio-section-index,
+.gallery-toolbar > p { color: var(--studio-accent); }
+.folio-about-statement em,
+.folio-section-title em { color: var(--studio-accent); }
+.folio-about .glass-panel,
+.folio-about .glass-tag,
+.film-filter,
+.project-frame { border-color: var(--studio-line) !important; }
+.folio-about .glass-panel,
+.folio-about .glass-tag,
+.film-filter { background: rgba(255,255,255,0.03) !important; }
+.folio-about .glass-button:hover,
+.film-filter-active { background: var(--studio-accent) !important; color: #160b09 !important; }
+.folio-section-title,
+.folio-about-name,
+.folio-about-statement { color: var(--studio-text); }
+.folio-work-count,
+.folio-about-copy { color: var(--studio-muted); }
+.folio-footer { border-color: var(--studio-line); background: #05070b; }
+.folio-footer a:hover { color: var(--studio-accent) !important; }
+@media (max-width: 1024px) {
+  .studio-shell { width: min(100% - 40px, 960px); }
+  .studio-hero-lower { grid-template-columns: 180px minmax(0, 1fr); }
+  .studio-hero-side-note { display: none; }
+}
+@media (max-width: 680px) {
+  .studio-shell { width: min(100% - 28px, 640px); }
+  .studio-hero-shell { padding-top: 14px; padding-bottom: 24px; }
+  .studio-topbar { gap: 14px; }
+  .studio-brand strong,
+  .studio-topbar-actions > span { display: none; }
+  .studio-nav-links { gap: 18px; }
+  .studio-topbar-actions { gap: 0; }
+  .studio-topbar-actions a { padding: 11px 12px; }
+  .studio-hero-content { padding-top: 32px; }
+  .studio-hero-kicker-row { align-items: flex-start; flex-direction: column; gap: 7px; }
+  .studio-hero-lower { display: block; margin-top: auto; }
+  .studio-hero-impact { display: none; }
+  .studio-hero-main-copy h1 { font-size: clamp(4.4rem, 20vw, 7.2rem); }
+  .studio-hero-main-copy > p { font-size: 0.98rem; }
+  .studio-hero-actions { flex-wrap: wrap; }
+  .studio-hero-side-note { display: block; margin-top: 26px; }
+  .studio-hero-side-note p { max-width: 290px; }
+  .studio-hero::after { right: 18px; bottom: 18px; left: 18px; }
+}
+
+/* Restore the portfolio's own cold, neutral palette after the discarded red variant. */
+.gallery-toolbar > p { color: rgba(255, 255, 255, 0.42); }
+.film-filter-active {
+  background: rgba(235, 249, 255, 0.96) !important;
+  color: #071018 !important;
+  box-shadow: 0 1px 8px rgba(193, 233, 255, 0.24);
+}
+.project-frame,
+.film-filter,
+.folio-footer { border-color: rgba(255, 255, 255, 0.14) !important; }
+
+/* Contact is deliberately the final full-screen beat, after the work has earned the CTA. */
+.contact-section {
+  display: grid;
+  min-height: min(760px, 88svh);
+  place-items: center;
+  padding: 96px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(143, 214, 255, 0.1), transparent 34%),
+    linear-gradient(180deg, #0a0a0a, #050607);
+}
+.contact-inner { max-width: 980px; text-align: center; }
+.contact-eyebrow {
+  margin: 0;
+  color: rgba(217, 238, 255, 0.72);
+  font: 700 11px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.contact-inner h2 {
+  margin: 22px 0 0;
+  color: #fff;
+  font: 500 clamp(3.3rem, 7vw, 7.5rem)/0.94 -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, sans-serif;
+  letter-spacing: -0.065em;
+}
+.contact-inner h2 span { display: block; color: rgba(216, 235, 250, 0.78); }
+.contact-copy { margin: 26px auto 0; color: rgba(255, 255, 255, 0.58); font-size: 1rem; line-height: 1.7; }
+.contact-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 24px;
+  margin-top: 34px;
+  padding: 16px 18px 16px 22px;
+  border: 1px solid rgba(224, 244, 255, 0.26);
+  border-radius: 999px;
+  background: rgba(232, 247, 255, 0.08);
+  color: rgba(246, 251, 255, 0.96);
+  font: 600 13px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1), background 260ms ease, color 260ms ease;
+}
+.contact-email span:last-child { font-size: 17px; }
+.contact-email:hover { transform: translateY(-3px); background: rgba(235, 249, 255, 0.94); color: #0b1217; }
+
+/* Chapter hand-offs reuse the single, restrained hero CTA. */
+.section-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  width: fit-content;
+  min-height: 34px;
+  margin-top: 48px;
+  padding: 0.54rem 0.75rem;
+  border: 1px solid rgba(214, 240, 255, 0.44);
+  border-radius: 999px;
+  background: rgba(9, 17, 25, 0.34);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.2), 0 9px 26px rgba(0, 0, 0, 0.2);
+  color: rgba(245, 251, 255, 0.94);
+  font: 600 10px/1 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1), background 260ms ease, box-shadow 260ms ease;
+}
+.section-next-dot {
+  width: 0.42rem;
+  height: 0.42rem;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: #c9efff;
+  box-shadow: 0 0 0 4px rgba(201, 239, 255, 0.12), 0 0 15px rgba(155, 225, 255, 0.72);
+}
+.section-next strong {
+  font: inherit;
+}
+.section-next-arrow {
+  font-size: 13px;
+  line-height: 0.8;
+  transition: transform 260ms ease;
+}
+.section-next:hover {
+  transform: translateY(-2px);
+  background: rgba(220, 244, 255, 0.16);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.36), 0 0 0 5px rgba(149, 215, 255, 0.08), 0 15px 34px rgba(0, 0, 0, 0.28);
+}
+.section-next:hover .section-next-arrow {
+  transform: translateX(3px);
+}
+.section-next-works { align-self: flex-start; margin-top: 54px; }
+@media (max-width: 640px) {
+  .contact-section { min-height: 72svh; padding-inline: 20px; }
+  .contact-inner h2 { font-size: clamp(3rem, 15vw, 4.6rem); }
+  .contact-email { max-width: 100%; gap: 15px; font-size: 11px; }
+  .section-next { margin-top: 38px; }
+  .section-next-works { margin-top: 42px; }
 }

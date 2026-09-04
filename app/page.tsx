@@ -3,6 +3,7 @@
 import About from "../components/About";
 import Hero from "../components/Hero";
 import Gallery from "../components/Gallery";
+import Contact from "../components/Contact";
 import { motion } from "framer-motion";
 import { projects } from "../data/projects";
 import { site } from "../data/site";
@@ -29,7 +30,7 @@ export default function Home() {
         >
           <div>
             <p className="text-[11px] uppercase tracking-[0.4em] text-white/40">
-              Selected Works
+              精选作品
             </p>
             <h2 className="mt-4 text-3xl font-light tracking-tight text-white sm:text-4xl">
               作品集
@@ -42,7 +43,15 @@ export default function Home() {
 
         <Gallery />
 
+        <a href="#contact" data-cursor="link" className="section-next section-next-works">
+          <span className="section-next-dot" aria-hidden="true" />
+          <strong>开始合作</strong>
+          <span className="section-next-arrow" aria-hidden="true">→</span>
+        </a>
+
       </section>
+
+      <Contact />
 
       <footer className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-10 text-center sm:flex-row sm:px-6 sm:text-left lg:px-8">

@@ -27,7 +27,7 @@ const item: Variants = {
  * 位置：Hero 与 Works 之间，先建立人格信任再看作品。
  */
 export default function About() {
-  const { name, role, email, about } = site;
+  const { name, role, about } = site;
 
   return (
     <section
@@ -141,12 +141,13 @@ export default function About() {
 
             <motion.div variants={item} className="mt-10">
               <a
-                href={`mailto:${email}`}
+                href="#works"
                 data-cursor="link"
-                className="glass-button inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-xs tracking-wide"
+                className="section-next"
               >
-                <span>联系我</span>
-                <span aria-hidden="true">→</span>
+                <span className="section-next-dot" aria-hidden="true" />
+                <strong>查看精选作品</strong>
+                <span className="section-next-arrow" aria-hidden="true">→</span>
               </a>
             </motion.div>
           </motion.div>

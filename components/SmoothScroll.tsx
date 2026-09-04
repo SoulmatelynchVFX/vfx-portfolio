@@ -32,7 +32,7 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
     };
     rafId = requestAnimationFrame(raf);
 
-    // 锚点跳转 → 交给 Lenis 平滑滚动
+    // 锚点跳转 → 交给 Lenis 完成一段可感知的章节过渡。
     const onClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement | null;
       const anchor = target?.closest?.('a[href^="#"]') as HTMLAnchorElement | null;
@@ -42,7 +42,12 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
       const el = document.querySelector<HTMLElement>(hash);
       if (!el) return;
       event.preventDefault();
-      lenis.scrollTo(el, { offset: 0 });
+      window.history.pushState(null, "", hash);
+      lenis.scrollTo(el, {
+        offset: 0,
+        duration: 1.05,
+        easing: (t) => 1 - Math.pow(1 - t, 4),
+      });
     };
     document.addEventListener("click", onClick);
 

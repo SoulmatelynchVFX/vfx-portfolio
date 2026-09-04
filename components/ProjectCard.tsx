@@ -7,6 +7,7 @@ import { categories } from "../data/projects";
 
 interface ProjectCardProps {
   project: Project;
+  index: number;
   onOpen: () => void;
 }
 
@@ -14,7 +15,7 @@ interface ProjectCardProps {
  * 画廊缩略图卡片：封面懒加载。
  * 悬停时封面平滑渐隐、静音循环播放视频片段，移开即恢复封面。
  */
-export default function ProjectCard({ project, onOpen }: ProjectCardProps) {
+export default function ProjectCard({ project, index, onOpen }: ProjectCardProps) {
   const [hovered, setHovered] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -77,6 +78,9 @@ export default function ProjectCard({ project, onOpen }: ProjectCardProps) {
         {/* 轻微压暗层，保证时长标签可读 */}
         <div className="pointer-events-none absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/20" />
 
+        <span className="absolute left-3 top-3 text-[10px] font-medium tabular-nums tracking-[0.18em] text-white/80">
+          {String(index).padStart(2, "0")}
+        </span>
         <span className="absolute right-3 top-3 border border-white/25 bg-black/25 px-2 py-1 text-[10px] tabular-nums tracking-[0.12em] text-white/85 backdrop-blur-sm">
           {project.duration}
         </span>

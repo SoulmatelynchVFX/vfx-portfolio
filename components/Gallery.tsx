@@ -41,7 +41,10 @@ export default function Gallery() {
 
   return (
     <>
-      <FilterBar categories={categories} active={active} onChange={setActive} />
+      <div className="gallery-toolbar">
+        <p>Curated reel / {String(visible.length).padStart(2, "0")} films</p>
+        <FilterBar categories={categories} active={active} onChange={setActive} />
+      </div>
 
       {/* key={active} 让切换分类时重新触发错落入场动画 */}
       <motion.div
@@ -58,7 +61,7 @@ export default function Gallery() {
             variants={itemVariants}
             className={i === 0 ? "portfolio-feature lg:col-span-7 lg:row-span-2" : "lg:col-span-5"}
           >
-            <ProjectCard project={project} onOpen={() => open(i)} />
+            <ProjectCard project={project} index={i + 1} onOpen={() => open(i)} />
           </motion.div>
         ))}
       </motion.div>

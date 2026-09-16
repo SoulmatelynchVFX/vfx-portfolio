@@ -31,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="zh-CN" className="bg-[#0a0a0a]">
       <body className="min-h-screen">
-        <MotionConfig reducedMotion="user">
+        <MotionConfig reducedMotion="never">
           <SmoothScroll>{children}</SmoothScroll>
         </MotionConfig>
         <Analytics />

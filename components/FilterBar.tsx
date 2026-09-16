@@ -23,7 +23,7 @@ export default function FilterBar({ categories, active, onChange }: FilterBarPro
             className={`film-filter-button shrink-0 whitespace-nowrap px-4 py-2 text-[11px] uppercase tracking-[0.16em] transition-all duration-300 ${
               isActive
                 ? "film-filter-active"
-                : "text-white/45 hover:text-white"
+                : "text-white/65 hover:text-white"
             }`}
           >
             {c.label}

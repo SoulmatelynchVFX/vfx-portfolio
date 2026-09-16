@@ -136,7 +136,7 @@ export default function About() {
             </motion.div>
 
             <motion.div variants={item} className="mt-10">
-              <p className="text-[11px] uppercase tracking-[0.4em] text-white/40">
+              <p className="text-[11px] uppercase tracking-[0.4em] text-white/60">
                 简介
               </p>
               <div className="mt-4 space-y-4 text-sm leading-relaxed text-white/70">
@@ -147,7 +147,7 @@ export default function About() {
             </motion.div>
 
             <motion.div variants={item} className="mt-10">
-              <p className="text-[11px] uppercase tracking-[0.4em] text-white/40">
+              <p className="text-[11px] uppercase tracking-[0.4em] text-white/60">
                 能力图谱
               </p>
               <div className="about-capabilities mt-5">
@@ -161,7 +161,7 @@ export default function About() {
             </motion.div>
 
             <motion.div variants={item} className="mt-9">
-              <p className="text-[11px] uppercase tracking-[0.4em] text-white/40">
+              <p className="text-[11px] uppercase tracking-[0.4em] text-white/60">
                 工具与技术
               </p>
               <div className="mt-4 flex flex-wrap gap-2">

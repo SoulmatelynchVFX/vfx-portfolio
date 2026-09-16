@@ -29,17 +29,7 @@ export default function Hero() {
     const video = videoRef.current;
     if (!video) return;
     video.muted = true;
-    video.loop = true;
-    const activateParticles = () => setParticlesActive(true);
-    const play = () => void video.play().then(activateParticles).catch(() => {});
-    play();
-    video.addEventListener("canplay", play, { once: true });
-    video.addEventListener("playing", activateParticles, { once: true });
-    if (!video.paused) activateParticles();
-    return () => {
-      video.removeEventListener("canplay", play);
-      video.removeEventListener("playing", activateParticles);
-    };
+    void video.play().then(() => setParticlesActive(true)).catch(() => setParticlesActive(false));
   }, []);
 
   useEffect(() => {
@@ -55,7 +45,7 @@ export default function Hero() {
       }
       if (meta) {
         meta.style.opacity = (1 - progress * 1.2).toFixed(3);
-        meta.style.transform = `translateY(${(-progress * 40).toFixed(1)}px)`;
+        meta.style.transform = `translateX(-50%) translateY(${(-progress * 40).toFixed(1)}px)`;
       }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -76,18 +66,17 @@ export default function Hero() {
         playsInline
         preload="metadata"
         onPlaying={() => setParticlesActive(true)}
+        onPause={() => setParticlesActive(false)}
         aria-hidden="true"
       />
       <div className="pointer-events-none absolute inset-0 z-[5]">
-        <HeroParticles active={particlesActive} />
+        {particlesActive && <HeroParticles active />}
       </div>
       <div className="pointer-events-none absolute inset-0 z-10 bg-[linear-gradient(180deg,rgba(2,8,13,.62)_0%,rgba(3,8,12,.14)_44%,rgba(2,5,8,.76)_100%)]" />
 
       <nav aria-label="主页导航" className="absolute inset-x-4 top-4 z-30 mx-auto flex max-w-7xl items-center justify-between sm:inset-x-6 sm:top-6 lg:px-2">
         <span className="film-wordmark">SW / VFX</span>
-        <a href="#about" data-cursor="link" className="film-nav-link">
-          关于
-        </a>
+        <a href="#about" data-cursor="link" className="film-nav-link min-h-11">关于</a>
       </nav>
 
       <div data-parallax="title" className="hero-title-stage pointer-events-none absolute inset-0 z-20 flex items-center justify-center px-6">

@@ -220,7 +220,7 @@ button,
   justify-content: space-between;
   gap: 1rem;
 }
-.gallery-toolbar > p { color: rgba(255, 255, 255, 0.42); }
+.gallery-toolbar > p { color: rgba(255, 255, 255, 0.65); }
 .film-filter {
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 999px;
@@ -387,13 +387,7 @@ button,
     font-size: 1.5rem;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .reel-cta,
-  .reel-cta-arrow,
-  .project-frame,
-  .project-frame::after { transition: none; }
-  .project-frame::after { display: none; }
-}
+
 
 /* --------------------------------------------------------------------------
    Portfolio 2026: cinematic editorial system
@@ -738,7 +732,7 @@ button,
 }
 
 /* Restore the portfolio's own cold, neutral palette after the discarded red variant. */
-.gallery-toolbar > p { color: rgba(255, 255, 255, 0.42); }
+.gallery-toolbar > p { color: rgba(255, 255, 255, 0.65); }
 .film-filter-active {
   background: rgba(235, 249, 255, 0.96) !important;
   color: #071018 !important;
@@ -969,4 +963,25 @@ button,
   .project-note-card { padding: 20px; border-radius: 26px; }
   .project-note-card .project-frame { border-radius: 19px !important; }
   .project-play-mark { right: 12px; bottom: 12px; width: 42px; height: 42px; }
+}
+
+/* Accessible playback and motion preferences. */
+.portfolio-lightbox {
+  position: fixed; inset: 0; margin: 0; border: 0;
+  width: 100%; max-width: none; height: 100dvh; max-height: none;
+  padding: 16px; overflow-y: auto; overscroll-behavior: contain;
+  background: #000; color: #fff;
+}
+.portfolio-lightbox::backdrop { background: #000; }
+.lightbox-content { margin-inline: auto; }
+#works .portfolio-lightbox .lightbox-header { position: sticky; top: -1px; z-index: 30; background: #101010; }
+.portfolio-lightbox .lightbox-desktop-nav { display: none; }
+.portfolio-lightbox .glass-button { min-height: 44px; }
+.portfolio-lightbox .glass-button:hover { background: #eee; color: #101010; }
+:where(a, button, input):focus-visible { outline: 2px solid #dbeeff; outline-offset: 4px; }
+.portfolio-card:focus-visible { outline-width: 2px; }
+.glass-button:disabled { opacity: 0.5; cursor: default; }
+@media (min-width: 768px) {
+  .portfolio-lightbox { padding: 32px; }
+  .portfolio-lightbox .lightbox-desktop-nav { display: flex; }
 }

@@ -67,7 +67,7 @@ export default function Gallery() {
       </motion.div>
 
       {visible.length === 0 && (
-        <p className="mt-12 text-sm text-white/40">该分类下暂无作品。</p>
+        <p className="mt-12 text-sm text-white/60">该分类下暂无作品。</p>
       )}
 
       {selected !== null && visible[selected] && (

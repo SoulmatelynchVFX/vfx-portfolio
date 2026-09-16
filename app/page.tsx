@@ -29,14 +29,14 @@ export default function Home() {
           className="mb-12 flex flex-wrap items-end justify-between gap-4"
         >
           <div>
-            <p className="text-[11px] uppercase tracking-[0.4em] text-white/40">
+            <p className="text-[11px] uppercase tracking-[0.4em] text-white/60">
               精选作品
             </p>
             <h2 className="mt-4 text-3xl font-light tracking-tight text-white sm:text-4xl">
               作品集
             </h2>
           </div>
-          <p className="text-xs tabular-nums text-white/40">
+          <p className="text-xs tabular-nums text-white/60">
             {projects.length} 部作品 · 2024–2026
           </p>
         </motion.header>
@@ -55,7 +55,7 @@ export default function Home() {
 
       <footer className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-10 text-center sm:flex-row sm:px-6 sm:text-left lg:px-8">
-          <p className="text-xs text-white/40">
+          <p className="text-xs text-white/60">
             © {new Date().getFullYear()} {site.name}
           </p>
           <a

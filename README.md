@@ -90,4 +90,4 @@ ffmpeg -i 原片.mov -c:v libx264 -preset slow -crf 20 -pix_fmt yuv420p -movflag
 
 - 画廊只加载封面图（懒加载），不预载视频；Lightbox 打开时才请求对应视频
 - 背景视频 `muted + loop + playsInline`，手机端自动播放无阻塞
-- 动效默认全局开启（`MotionConfig reducedMotion="never"` + Lenis `respectReducedMotion:false`），未对系统「减少动画」做降级，按设计保留电影感动效
+- 按站点展示需求默认启用视频、粒子、视差及平滑过渡；首屏视频静音循环播放，不显示动效或背景播放开关。

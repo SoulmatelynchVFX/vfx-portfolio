@@ -1,16 +1,20 @@
-# VFX Portfolio — 个人视觉特效作品集网站
+# Seal Wang · 个人网站
 
-暗黑、极简、电影感风格的视频作品集：全屏 Showreel 首屏 + 可分类过滤的作品画廊 + 沉浸式 Lightbox 播放器。
+这是我的个人网站，用来整理视觉特效作品、技术练习和个人介绍。
 
-## 技术选型
+除了制作 VFX，我也在开发和维护这个网站。从作品怎么呈现，到视频播放、页面过渡和粒子交互，我把想尝试的东西放进实际页面里，再随着使用慢慢调整。这个仓库记录的就是网站本身的实现。
 
-| 需求 | 选型 | 理由 |
-| --- | --- | --- |
-| 前端框架 | **Next.js 14 (App Router) + React 18 + TypeScript** | 生态成熟、可静态导出（`output: 'export'`）免费部署到任意静态托管，天然支持 SEO 元数据 |
-| 样式 | **Tailwind CSS 3** | 快速实现暗黑极简风格，移动端响应式开箱即用 |
-| 图片 | `next/image` + `loading="lazy"` | 原生懒加载，画廊封面按需加载 |
-| 视频 | 原生 `<video>`（`preload="metadata"` / 点击后再加载） | 画廊不预载视频，只有打开 Lightbox 才真正请求视频文件，首屏只加载 1 个背景视频 |
-| 字体 | 系统无衬线字体栈（含 PingFang / 微软雅黑） | 零外部请求，离线可用，中文显示友好 |
+## 网站里有什么
+
+首页以 Showreel 开场，接着是个人介绍、作品画廊和联系方式。作品按项目与练习分类，点击后可以查看视频、说明和使用的技术。
+
+视觉上采用深色背景、玻璃质感和粒子文字，让界面与作品的风格连贯。视频播放器、首屏粒子和滚动过渡也都在这个仓库里维护。
+
+## 实现
+
+网站使用 Next.js 14、React 18 和 TypeScript，样式用 Tailwind CSS。页面动画由 Framer Motion 配合 Lenis 实现，粒子文字和首屏粒子使用 Canvas，视频播放基于原生 `<video>`。
+
+内容与界面分开维护：更新作品时主要修改数据文件，调整展示方式时再改对应组件。
 
 ## 目录结构
 
@@ -33,19 +37,19 @@ vfx-portfolio/
 ├── lib/
 │   └── lenis.ts          # Lenis 单例（供 Lightbox stop/start）
 ├── data/
-│   ├── site.ts           # ★ 你的名字 / 头衔 / 邮箱 / Showreel 路径
-│   └── projects.ts       # ★ 作品数据（标题、分类、描述、技术栈）
+│   ├── site.ts           # 个人信息 / 联系方式 / 首页视频
+│   └── projects.ts       # 作品数据（标题、分类、描述、技术栈）
 ├── types.ts              # Project / Category 类型定义
 ├── public/
-│   ├── videos/           # 视频文件（占位视频已生成）
-│   └── posters/          # 封面图（占位封面已生成）
+│   ├── videos/           # 视频素材
+│   └── posters/          # 封面图
 └── scripts/
     ├── gen-placeholders.ps1  # 用 ffmpeg 生成占位视频/封面
     ├── check-lightbox.mjs    # E2E 冒烟测试（CDP 驱动无头 Edge）
     └── capture.mjs           # 运行时截图工具
 ```
 
-## 快速开始
+## 本地开发
 
 ```bash
 npm install
@@ -58,36 +62,27 @@ npm run dev        # http://localhost:3000
 npm run build && npm start
 ```
 
-> 如需纯静态导出（部署到 GitHub Pages / Netlify / 任意静态托管）：
-> 在 `next.config.mjs` 中把 `output: 'export'` 打开，再 `npm run build`，产物在 `out/`。
-> 图片优化已关闭（`images.unoptimized: true`），静态导出开箱即用。
+## 内容维护
 
-## 换成你自己的作品
+新增或更新作品时，将视频和封面放进 `public/videos/`、`public/posters/`，再更新 `data/projects.ts` 中的条目。个人介绍和首页素材入口集中在 `data/site.ts`。
 
-1. **个人信息**：编辑 `data/site.ts`（名字、头衔、邮箱、Showreel 路径）。
-2. **作品**：把视频放到 `public/videos/`、封面图放到 `public/posters/`，然后在 `data/projects.ts` 中增删改条目：
-   - `category` 对应分类 id（`project` / `practice`），想加分类就在 `categories` 里加一条；
-   - `techStack` 就是播放器下方显示的技术栈标签（节点、渲染器、软件等）；
-   - `video` / `poster` 改成你自己的文件名。
-3. **视频编码建议**（发给客户/制片前）：统一转成 H.264 + `-movflags +faststart`，浏览器兼容最好：
+仓库还保留了调试页面用的占位素材生成脚本。`npm run gen:media` 需要 PowerShell 和 ffmpeg，运行前应检查输出路径，避免覆盖同名素材；占位素材不应被当作实际作品展示。
+
+## 本地检查
+
+构建检查使用 `npm run build`。播放器与画廊的冒烟测试、截图工具基于 Edge 的 CDP 接口，使用 Node.js 内置的 WebSocket；可用 Node.js 24 运行，Edge 不在默认安装路径时需设置 `EDGE` 环境变量。
+
+这两个脚本当前固定匹配 `localhost:3100` 页面，检查时先在单独终端启动：
 
 ```bash
-ffmpeg -i 原片.mov -c:v libx264 -preset slow -crf 20 -pix_fmt yuv420p -movflags +faststart -an 输出.mp4
+npm run dev -- --port 3100
 ```
 
-## 占位视频
+然后运行：
 
-`npm run gen:media` 会用 ffmpeg 重新生成 9 个暗色调的渐变 / 分形动画占位视频及封面（需要先安装 ffmpeg，如 `winget install Gyan.FFmpeg`）。它们只是用来跑通 UI 的，正式上线前请替换成真实作品。
+```bash
+npm run test:e2e
+npm run shot
+```
 
-## 已验证（本机实测）
-
-- `npm run build` 通过（首屏 JS ≈ 97 kB）
-- E2E 冒烟测试 11 项全过：卡片渲染 / 点击打开 Lightbox / 视频自动播放 / 技术栈标签 / 键盘 ←→ 切换 / 序号计数 / ESC 关闭 / 滚动锁定释放 / 分类过滤
-- 桌面端 + 移动端（390px）响应式截图确认
-- 截图与测试：`npm run shot`、`npm run test:e2e`（需先启动 dev server）
-
-## 性能要点
-
-- 画廊只加载封面图（懒加载），不预载视频；Lightbox 打开时才请求对应视频
-- 背景视频 `muted + loop + playsInline`，手机端自动播放无阻塞
-- 按站点展示需求默认启用视频、粒子、视差及平滑过渡；首屏视频静音循环播放，不显示动效或背景播放开关。
+测试用于检查画廊与播放器交互；视频加载、移动端布局和动效表现还需要在实际设备上查看。

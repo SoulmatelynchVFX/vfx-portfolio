@@ -54,7 +54,12 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
       className="portfolio-lightbox"
       onCancel={(event) => { event.preventDefault(); onClose(); }}
       onKeyDown={(event) => {
-        if (event.target instanceof HTMLInputElement) return;
+        if (event.defaultPrevented || event.nativeEvent.isComposing || event.repeat ||
+            event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+        const target = event.target;
+        // Player shortcuts and editable/native inputs must never switch the project.
+        if (target instanceof HTMLElement && (target.isContentEditable ||
+            target.closest("input, textarea, select, [data-video-player]"))) return;
         if (hasMultiple && (event.key === "ArrowRight" || event.key === "ArrowLeft")) {
           event.preventDefault();
           onNavigate(event.key === "ArrowRight" ? next : prev);

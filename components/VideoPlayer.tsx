@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
+import type { KeyboardEvent } from "react";
 
 interface VideoPlayerProps { src: string; poster: string; }
 function formatTime(seconds: number) {
@@ -10,6 +11,7 @@ function formatTime(seconds: number) {
 
 export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const keyboardHintId = useId();
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(true);
   const [current, setCurrent] = useState(0);
@@ -26,7 +28,9 @@ export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
   const play = () => {
     const video = videoRef.current;
     if (!video) return;
-    void video.play().catch(() => {
+    void video.play().catch((reason: unknown) => {
+      // Pausing a pending play request is expected, not a media/network failure.
+      if (reason instanceof DOMException && reason.name === "AbortError") return;
       setPlaying(false);
       setLoading(false);
       setError("视频无法播放，请检查网络后重试。");
@@ -41,8 +45,31 @@ export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
     play();
   };
 
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    // Native controls keep their own keyboard behavior; shortcuts belong to this stop only.
+    if (event.target !== event.currentTarget || event.defaultPrevented ||
+        event.nativeEvent.isComposing || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    if (![" ", "ArrowLeft", "ArrowRight"].includes(event.key)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const video = videoRef.current;
+    if (!video || error) return;
+    if (event.key === " ") {
+      if (!event.repeat) video.paused ? play() : video.pause();
+      return;
+    }
+    if (!Number.isFinite(video.duration) || video.duration <= 0) return;
+    const time = Math.max(0, Math.min(video.duration,
+      video.currentTime + (event.key === "ArrowRight" ? 5 : -5)));
+    video.currentTime = time;
+    setCurrent(time);
+  };
+
   return (
-    <div className="glass-player overflow-hidden rounded-[22px]">
+    <div data-video-player tabIndex={0} role="group" aria-label="视频播放器"
+      aria-describedby={keyboardHintId} aria-keyshortcuts="Space ArrowLeft ArrowRight"
+      onKeyDown={handleKeyDown}
+      className="glass-player overflow-hidden rounded-[22px] focus-visible:outline-auto focus-visible:outline-offset-4">
       <div className="relative aspect-video w-full bg-black">
         <video
           ref={videoRef} src={src} poster={poster} playsInline muted={muted} preload="metadata"
@@ -64,6 +91,9 @@ export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
         <button type="button" onClick={retry} className="glass-button mt-3 rounded-full px-4 py-2">重试播放</button>
       </div>}
       <div className="glass-control-bar px-4 py-3">
+        <p id={keyboardHintId} className="mb-2 text-xs text-white/80">
+          Tab 聚焦播放器：空格播放/暂停，← / → 后退/快进 5 秒。进度条和按钮保留各自按键操作。
+        </p>
         <input type="range" aria-label="播放进度" min={0} max={duration || 0} step={0.1}
           value={current} disabled={!duration || !!error}
           aria-valuetext={`${formatTime(current)} / ${formatTime(duration)}`}
@@ -71,7 +101,7 @@ export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
           onChange={(e) => { const time = Number(e.target.value); if (videoRef.current) videoRef.current.currentTime = time; setCurrent(time); }}
         />
         <div className="flex items-center gap-3">
-          <button type="button" disabled={!!error} onClick={() => playing ? videoRef.current?.pause() : play()}
+          <button type="button" disabled={!!error} onClick={() => videoRef.current?.paused ? play() : videoRef.current?.pause()}
             aria-label={playing ? "暂停" : "播放"} className="glass-button h-11 min-w-11 rounded-full px-3 text-sm">
             {playing ? "暂停" : "播放"}
           </button>

@@ -31,7 +31,7 @@ vfx-portfolio/
 │   ├── FilterBar.tsx     # 分类标签（液态玻璃条，移动端可横滑）
 │   ├── ProjectCard.tsx   # 缩略图卡片（封面懒加载 + hover 静音预览）
 │   ├── Lightbox.tsx      # 沉浸式弹窗播放器 + 技术栈说明区
-│   ├── VideoPlayer.tsx   # 自定义播放器（进度条 / 静音 / 空闲隐藏控件）
+│   ├── VideoPlayer.tsx   # 自定义播放器（进度条 / 静音 / 聚焦后键盘控制）
 │   ├── ParticleLayer.tsx # 粒子汇聚成字（作品集底部 2026VFX 签名）
 │   └── SmoothScroll.tsx  # Lenis 平滑滚动 + 锚点接管
 ├── lib/
@@ -69,6 +69,21 @@ npm run build && npm start
 仓库还保留了调试页面用的占位素材生成脚本。`npm run gen:media` 需要 PowerShell 和 ffmpeg，运行前应检查输出路径，避免覆盖同名素材；占位素材不应被当作实际作品展示。
 
 ## 本地检查
+
+### 播放器键盘操作
+
+打开作品后，焦点先落在关闭按钮；按 Tab 可到达有可见焦点框的“视频播放器”。仅当播放器这一焦点停靠点聚焦时，空格播放/暂停，左右方向键后退/快进 5 秒，并限制在视频起止范围内。按住空格不会连续切换播放状态。
+
+继续按 Tab 可操作原生进度滑块和播放、静音按钮，它们保留各自的键盘行为。播放器内的方向键不再切换作品；焦点在播放器外的弹窗区域时，左右键仍可切换作品。输入框、文本域、选择框与可编辑内容不会触发作品切换；组合键和输入法组字期间也不接管方向键。Esc 仍关闭弹窗并恢复入口焦点。
+
+新增真实浏览器回归脚本 `scripts/check-player-keyboard.mjs`。先启动端口 3100 的开发服务器；脚本需要 Node.js、Edge 与已安装的 Playwright。可通过 `PLAYWRIGHT_MODULE` 指向现有 Playwright 模块目录，通过 `EDGE` 指定浏览器，通过 `URL` 指定本机页面。不自动下载浏览器或添加项目运行依赖。
+
+```powershell
+# 已有 Playwright 时；否则先将 PLAYWRIGHT_MODULE 指向可用模块目录
+npm run test:keyboard
+```
+
+截图写入已忽略的 `preview/keyboard-desktop.png` 和 `preview/keyboard-mobile.png`。测试使用真实页面与键盘事件；不等于屏幕阅读器、Safari 或手机实机认证。
 
 构建检查使用 `npm run build`。播放器与画廊的冒烟测试、截图工具基于 Edge 的 CDP 接口，使用 Node.js 内置的 WebSocket；可用 Node.js 24 运行，Edge 不在默认安装路径时需设置 `EDGE` 环境变量。
 

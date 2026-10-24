@@ -9,6 +9,7 @@
     "start": "next start",
     "gen:media": "powershell -ExecutionPolicy Bypass -File scripts/gen-placeholders.ps1",
     "test:e2e": "node scripts/check-lightbox.mjs",
+    "test:keyboard": "node scripts/check-player-keyboard.mjs",
     "shot": "node scripts/capture.mjs"
   },
   "dependencies": {

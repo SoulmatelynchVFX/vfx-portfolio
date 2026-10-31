@@ -300,6 +300,24 @@ button,
       inset 0 1px 0 rgba(255, 255, 255, 0.18);
   }
 
+  .glass-player:fullscreen {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    background: #000;
+    overflow: auto;
+  }
+  .glass-player:fullscreen [data-video-surface] {
+    flex: 1 1 0;
+    min-height: 0;
+    aspect-ratio: auto;
+  }
+  .glass-player:fullscreen .glass-control-bar {
+    flex-shrink: 0;
+  }
+
   /* ---- 播放器底部玻璃控制条 ---- */
   .glass-control-bar {
     background: rgba(20, 20, 20, 0.45);

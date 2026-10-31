@@ -52,7 +52,12 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
     <dialog
       ref={dialogRef}
       className="portfolio-lightbox"
-      onCancel={(event) => { event.preventDefault(); onClose(); }}
+      onCancel={(event) => {
+        event.preventDefault();
+        // Escape dismisses the innermost browser fullscreen layer first.
+        if (document.fullscreenElement && dialogRef.current?.contains(document.fullscreenElement)) return;
+        onClose();
+      }}
       onKeyDown={(event) => {
         if (event.defaultPrevented || event.nativeEvent.isComposing || event.repeat ||
             event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;

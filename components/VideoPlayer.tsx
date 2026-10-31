@@ -10,14 +10,63 @@ function formatTime(seconds: number) {
 }
 
 export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
+  const playerRef = useRef<HTMLDivElement>(null);
+  const fullscreenButtonRef = useRef<HTMLButtonElement>(null);
+  const fullscreenPendingRef = useRef(false);
+  const mountedRef = useRef(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const keyboardHintId = useId();
+  const fullscreenHintId = useId();
+  const [fullscreenAvailable, setFullscreenAvailable] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
+  const [fullscreenPending, setFullscreenPending] = useState(false);
+  const [fullscreenMessage, setFullscreenMessage] = useState("");
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(true);
   const [current, setCurrent] = useState(0);
   const [duration, setDuration] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    mountedRef.current = true;
+    const player = playerRef.current;
+    const supported = !!document.fullscreenEnabled &&
+      typeof player?.requestFullscreen === "function" && typeof document.exitFullscreen === "function";
+    setFullscreenAvailable(supported);
+    if (!supported) setFullscreenMessage("当前浏览器不支持页面全屏，可继续在此播放。");
+    let wasFullscreen = false;
+    const syncFullscreen = () => {
+      const active = document.fullscreenElement === player;
+      setFullscreen(active);
+      if (active) setFullscreenMessage("");
+      if (wasFullscreen && !active) fullscreenButtonRef.current?.focus({ preventScroll: true });
+      wasFullscreen = active;
+    };
+    document.addEventListener("fullscreenchange", syncFullscreen);
+    syncFullscreen();
+    return () => {
+      mountedRef.current = false;
+      document.removeEventListener("fullscreenchange", syncFullscreen);
+    };
+  }, []);
+
+  const toggleFullscreen = async () => {
+    const player = playerRef.current;
+    if (!player || !fullscreenAvailable || fullscreenPendingRef.current) return;
+    fullscreenPendingRef.current = true;
+    setFullscreenPending(true);
+    setFullscreenMessage("");
+    try {
+      if (document.fullscreenElement === player) await document.exitFullscreen();
+      else await player.requestFullscreen();
+    } catch {
+      if (mountedRef.current) setFullscreenMessage("全屏操作未完成，可继续播放或再次尝试。");
+    } finally {
+      fullscreenPendingRef.current = false;
+      if (mountedRef.current) setFullscreenPending(false);
+    }
+  };
 
   useEffect(() => {
     const video = videoRef.current;
@@ -66,11 +115,11 @@ export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
   };
 
   return (
-    <div data-video-player tabIndex={0} role="group" aria-label="视频播放器"
+    <div ref={playerRef} data-video-player tabIndex={0} role="group" aria-label="视频播放器"
       aria-describedby={keyboardHintId} aria-keyshortcuts="Space ArrowLeft ArrowRight"
       onKeyDown={handleKeyDown}
       className="glass-player overflow-hidden rounded-[22px] focus-visible:outline-auto focus-visible:outline-offset-4">
-      <div className="relative aspect-video w-full bg-black">
+      <div data-video-surface className="relative aspect-video w-full bg-black">
         <video
           ref={videoRef} src={src} poster={poster} playsInline muted={muted} preload="metadata"
           className="h-full w-full object-contain"
@@ -100,7 +149,7 @@ export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
           className="mb-2 block h-6 w-full accent-white"
           onChange={(e) => { const time = Number(e.target.value); if (videoRef.current) videoRef.current.currentTime = time; setCurrent(time); }}
         />
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button type="button" disabled={!!error} onClick={() => videoRef.current?.paused ? play() : videoRef.current?.pause()}
             aria-label={playing ? "暂停" : "播放"} className="glass-button h-11 min-w-11 rounded-full px-3 text-sm">
             {playing ? "暂停" : "播放"}
@@ -108,7 +157,16 @@ export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
           <span className="text-xs tabular-nums text-white/80">{formatTime(current)} / {formatTime(duration)}</span>
           <button type="button" onClick={() => setMuted(!muted)} aria-label={muted ? "取消静音" : "静音"}
             className="glass-button ml-auto h-11 shrink-0 rounded-full px-3 text-xs">{muted ? "开启声音" : "静音"}</button>
+          <button ref={fullscreenButtonRef} type="button" onClick={() => void toggleFullscreen()}
+            disabled={!fullscreenAvailable} aria-disabled={fullscreenAvailable && fullscreenPending ? true : undefined}
+            aria-describedby={fullscreenHintId}
+            className="glass-button min-h-11 shrink-0 rounded-full px-3 text-xs focus-visible:outline-auto focus-visible:outline-offset-2 disabled:opacity-60">
+            {fullscreen ? "退出全屏" : "全屏"}
+          </button>
         </div>
+        <p id={fullscreenHintId} role="status" className="mt-2 text-xs text-white/80">
+          {fullscreenMessage || (fullscreen ? "按 Esc 退出全屏，返回作品播放窗口。" : "")}
+        </p>
       </div>
     </div>
   );

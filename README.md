@@ -31,7 +31,7 @@ vfx-portfolio/
 │   ├── FilterBar.tsx     # 分类标签（液态玻璃条，移动端可横滑）
 │   ├── ProjectCard.tsx   # 缩略图卡片（封面懒加载 + hover 静音预览）
 │   ├── Lightbox.tsx      # 沉浸式弹窗播放器 + 技术栈说明区
-│   ├── VideoPlayer.tsx   # 自定义播放器（进度条 / 静音 / 聚焦后键盘控制）
+│   ├── VideoPlayer.tsx   # 自定义播放器（进度条 / 静音 / 键盘控制 / 全屏）
 │   ├── ParticleLayer.tsx # 粒子汇聚成字（作品集底部 2026VFX 签名）
 │   └── SmoothScroll.tsx  # Lenis 平滑滚动 + 锚点接管
 ├── lib/
@@ -69,6 +69,23 @@ npm run build && npm start
 仓库还保留了调试页面用的占位素材生成脚本。`npm run gen:media` 需要 PowerShell 和 ffmpeg，运行前应检查输出路径，避免覆盖同名素材；占位素材不应被当作实际作品展示。
 
 ## 本地检查
+
+### 播放器全屏
+
+打开作品后，使用播放器右侧的“全屏”按钮进入浏览器全屏；全屏包含视频及播放、进度、声音和退出控件。按钮可用 Tab 聚焦、Enter 或空格操作。使用“退出全屏”返回作品窗口，焦点回到全屏按钮；浏览器退出全屏时按钮状态同步。Esc 优先退出浏览器全屏，返回作品窗口后再次 Esc 关闭作品并恢复画廊入口焦点。
+
+浏览器不支持标准 Fullscreen API 或策略禁止全屏时，按钮不可用并显示原因，仍可在作品窗口播放。请求被拒绝时提示“全屏操作未完成”，不误报为视频加载失败，可继续播放或重试。不实现旧版 WebKit 专属视频全屏，也不声称所有 Safari/iOS 版本支持；这类环境保留窗口内播放。
+
+状态以浏览器 `fullscreenchange` 和 `fullscreenElement` 为准，不在点击时假定已成功。没有新增全局快捷键，播放器原有键盘操作保持不变。全屏控件在窄屏可换行。
+
+先启动本地服务，沿用下面的 Playwright/Edge 环境设置后运行：
+
+```powershell
+npm run test:fullscreen
+npm run test:keyboard
+```
+
+全屏脚本验证实际进入/按钮退出、浏览器 API 退出、焦点恢复、拒绝后重试和不支持时降级；失败分支使用浏览器 API 模拟，不能代替 Safari/iOS 实机验证。截图存入已忽略的 `preview/fullscreen-desktop.png` 和 `preview/fullscreen-fallback-mobile.png`。原生全屏时的实体 Esc 行为还应手动验证。
 
 ### 播放器键盘操作
 

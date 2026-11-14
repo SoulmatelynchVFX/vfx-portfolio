@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type KeyboardEvent, type RefObject } from "react";
 import type { Project } from "../types";
 import { categories } from "../data/projects";
 import { getLenis } from "../lib/lenis";
@@ -11,6 +11,28 @@ interface LightboxProps {
   index: number;
   onClose: () => void;
   onNavigate: (nextIndex: number) => void;
+  filterBarRef: RefObject<HTMLDivElement>;
+}
+
+function wrapTabFocus(event: KeyboardEvent<HTMLDialogElement>) {
+  const dialog = event.currentTarget;
+  const fullscreen = document.fullscreenElement;
+  const scope = fullscreen && dialog.contains(fullscreen) ? fullscreen : dialog;
+  const stops = Array.from(scope.querySelectorAll<HTMLElement>(
+    "button, input, select, textarea, a[href], [tabindex]"
+  ));
+  if (scope instanceof HTMLElement && scope.tabIndex >= 0) stops.unshift(scope);
+  const visible = stops.filter(element => element.tabIndex >= 0 &&
+    !element.matches(":disabled") && !element.closest("[inert]") &&
+    element.getClientRects().length > 0 && getComputedStyle(element).visibility === "visible");
+  const first = visible[0];
+  const last = visible[visible.length - 1];
+  const active = document.activeElement;
+  const boundary = event.shiftKey ? first : last;
+  if (active === boundary || !visible.some(element => element === active)) {
+    event.preventDefault();
+    (event.shiftKey ? last : first)?.focus();
+  }
 }
 
 /**
@@ -18,7 +40,7 @@ interface LightboxProps {
  * 纯黑背景 + 自定义播放器；控件始终可见，支持键盘与触控，
  * 支持 ESC 关闭、←/→ 切换作品。
  */
-export default function Lightbox({ projects, index, onClose, onNavigate }: LightboxProps) {
+export default function Lightbox({ projects, index, onClose, onNavigate, filterBarRef }: LightboxProps) {
   const project = projects[index];
   const prev = (index - 1 + projects.length) % projects.length;
   const next = (index + 1) % projects.length;
@@ -44,9 +66,12 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
       dialog.close();
       document.body.style.overflow = previousOverflow;
       lenis?.start();
-      if (trigger?.isConnected) trigger.focus({ preventScroll: true });
+      const returnTarget = trigger?.isConnected
+        ? trigger
+        : filterBarRef.current?.querySelector<HTMLButtonElement>('button[aria-pressed="true"]');
+      returnTarget?.focus({ preventScroll: true });
     };
-  }, []);
+  }, [filterBarRef]);
 
   return (
     <dialog
@@ -59,8 +84,13 @@ export default function Lightbox({ projects, index, onClose, onNavigate }: Light
         onClose();
       }}
       onKeyDown={(event) => {
-        if (event.defaultPrevented || event.nativeEvent.isComposing || event.repeat ||
-            event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+        if (event.defaultPrevented || event.nativeEvent.isComposing ||
+            event.altKey || event.ctrlKey || event.metaKey) return;
+        if (event.key === "Tab") {
+          wrapTabFocus(event);
+          return;
+        }
+        if (event.repeat || event.shiftKey) return;
         const target = event.target;
         // Player shortcuts and editable/native inputs must never switch the project.
         if (target instanceof HTMLElement && (target.isContentEditable ||

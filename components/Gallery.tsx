@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { motion, type Variants } from "framer-motion";
 import type { CategoryId } from "../types";
 import { categories, projects } from "../data/projects";
@@ -29,6 +29,7 @@ const itemVariants: Variants = {
 export default function Gallery() {
   const [active, setActive] = useState<CategoryId>("project");
   const [selected, setSelected] = useState<number | null>(null);
+  const filterBarRef = useRef<HTMLDivElement>(null);
 
   const visible = useMemo(
     () => projects.filter((p) => p.category === active),
@@ -41,7 +42,7 @@ export default function Gallery() {
 
   return (
     <>
-      <div className="gallery-toolbar">
+      <div ref={filterBarRef} className="gallery-toolbar">
         <p>Curated reel / {String(visible.length).padStart(2, "0")} films</p>
         <FilterBar categories={categories} active={active} onChange={setActive} />
       </div>
@@ -76,6 +77,7 @@ export default function Gallery() {
           index={selected}
           onClose={close}
           onNavigate={navigate}
+          filterBarRef={filterBarRef}
         />
       )}
     </>

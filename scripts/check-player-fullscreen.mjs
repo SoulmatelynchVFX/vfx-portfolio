@@ -33,6 +33,11 @@ try {
   const exit = player.getByRole("button", { name: "退出全屏", exact: true });
   await exit.waitFor();
   check("Exit and playback controls remain visible", await exit.isVisible() && await player.getByRole("slider").isVisible());
+  await exit.focus();
+  await page.keyboard.press("Tab");
+  check("Fullscreen Tab wraps to player", await player.evaluate(el => el === document.activeElement));
+  await page.keyboard.press("Shift+Tab");
+  check("Fullscreen Shift+Tab wraps to exit", await exit.evaluate(el => el === document.activeElement));
   check("Fullscreen fills viewport without horizontal overflow", await player.evaluate(el =>
     Math.abs(el.getBoundingClientRect().width - innerWidth) <= 2 && el.scrollWidth <= el.clientWidth));
   await mkdir("preview", { recursive: true });

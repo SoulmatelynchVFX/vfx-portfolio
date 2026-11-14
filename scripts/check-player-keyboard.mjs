@@ -27,7 +27,19 @@ try {
   await video.evaluate(v => v.pause());
   const originalSrc = await video.getAttribute("src");
   const close = dialog.getByRole("button", { name: "关闭", exact: true });
-  await close.focus();
+  const focused = locator => locator.evaluate(el => el === document.activeElement);
+  check("Opening focuses close", await focused(close));
+  for (const width of [1280, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    const last = width === 1280
+      ? dialog.getByRole("button", { name: "下一个作品", exact: true })
+      : dialog.getByRole("button", { name: "下一个 →", exact: true });
+    await page.keyboard.press("Shift+Tab");
+    check(`Shift+Tab at ${width}px wraps to last control`, await focused(last));
+    await page.keyboard.press("Tab");
+    check(`Tab at ${width}px wraps to close`, await focused(close));
+  }
+  await page.setViewportSize({ width: 1280, height: 900 });
   await page.keyboard.press("Tab");
   check("Tab reaches named player", await player.evaluate(el => el === document.activeElement));
   check("Keyboard focus indicator visible", await player.evaluate(el => {
@@ -106,10 +118,31 @@ try {
   await page.keyboard.press("ArrowRight");
   await page.waitForFunction(src => document.querySelector("dialog video")?.getAttribute("src") !== src, originalSrc);
   check("Arrows outside player still switch project", await video.getAttribute("src") !== originalSrc);
+  check("Work switch keeps focus on close", await focused(close));
   await page.keyboard.press("Escape");
   await dialog.waitFor({ state: "detached" });
   check("Escape restores trigger focus", await trigger.evaluate(el => el === document.activeElement));
   check("Closing unlocks page scroll", await page.evaluate(() => document.body.style.overflow !== "hidden"));
+  const practice = page.getByRole("button", { name: "练习", exact: true });
+  await practice.focus();
+  await page.keyboard.press("Enter");
+  await practice.and(page.locator('[aria-pressed="true"]')).waitFor();
+  const practiceTrigger = page.getByRole("button", { name: "播放作品：流体容器", exact: true });
+  await practiceTrigger.focus();
+  await page.keyboard.press("Enter");
+  await close.waitFor();
+  await page.keyboard.press("Enter");
+  await dialog.waitFor({ state: "detached" });
+  check("Keyboard close returns to filtered entry", await focused(practiceTrigger));
+  await page.keyboard.press("Enter");
+  await close.waitFor();
+  // Simulate a background category change that removes the original trigger.
+  const projects = page.locator(".film-filter button").filter({ hasText: "项目" });
+  await projects.dispatchEvent("click");
+  await projects.and(page.locator('[aria-pressed="true"]')).waitFor();
+  await page.keyboard.press("Escape");
+  await dialog.waitFor({ state: "detached" });
+  check("Removed entry restores focus to active category", await focused(projects));
   check("No uncaught browser exceptions", errors.length === 0);
   console.log(`${passed} keyboard checks passed.`);
 } finally {

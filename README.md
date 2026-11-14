@@ -102,6 +102,8 @@ npm run test:keyboard
 
 截图写入已忽略的 `preview/keyboard-desktop.png` 和 `preview/keyboard-mobile.png`。测试使用真实页面与键盘事件；不等于屏幕阅读器、Safari 或手机实机认证。
 
+作品弹窗打开时，Tab 和 Shift+Tab 在可用控件间循环；播放器进入全屏时，循环范围为播放器。关闭或按 Esc 后，焦点回到打开弹窗的作品卡片。若该入口已被移除，焦点回到当前分类按钮。
+
 构建检查使用 `npm run build`。播放器与画廊的冒烟测试、截图工具基于 Edge 的 CDP 接口，使用 Node.js 内置的 WebSocket；可用 Node.js 24 运行，Edge 不在默认安装路径时需设置 `EDGE` 环境变量。
 
 这两个脚本当前固定匹配 `localhost:3100` 页面，检查时先在单独终端启动：

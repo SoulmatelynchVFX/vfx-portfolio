@@ -11,6 +11,7 @@
     "test:e2e": "node scripts/check-lightbox.mjs",
     "test:keyboard": "node scripts/check-player-keyboard.mjs",
     "test:fullscreen": "node scripts/check-player-fullscreen.mjs",
+    "test:motion": "node scripts/check-reduced-motion.mjs",
     "shot": "node scripts/capture.mjs"
   },
   "dependencies": {

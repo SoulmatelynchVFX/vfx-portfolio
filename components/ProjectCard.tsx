@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import type { Project } from "../types";
 import { categories } from "../data/projects";
@@ -23,6 +23,7 @@ export default function ProjectCard({ project, index, onOpen }: ProjectCardProps
     categories.find((c) => c.id === project.category)?.label ?? project.category;
 
   const handleEnter = () => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     setHovered(true);
     const v = videoRef.current;
     if (!v) return;
@@ -30,13 +31,23 @@ export default function ProjectCard({ project, index, onOpen }: ProjectCardProps
     void v.play().catch(() => {});
   };
 
-  const handleLeave = () => {
+  const handleLeave = useCallback(() => {
     setHovered(false);
     const v = videoRef.current;
     if (!v) return;
     v.pause();
     v.currentTime = 0;
-  };
+  }, []);
+
+  useEffect(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const syncPreview = () => {
+      if (preference.matches) handleLeave();
+    };
+    syncPreview();
+    preference.addEventListener("change", syncPreview);
+    return () => preference.removeEventListener("change", syncPreview);
+  }, [handleLeave]);
 
   return (
     <button

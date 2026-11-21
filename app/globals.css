@@ -997,6 +997,24 @@ button,
 .portfolio-lightbox .glass-button { min-height: 44px; }
 .portfolio-lightbox .glass-button:hover { background: #eee; color: #101010; }
 :where(a, button, input):focus-visible { outline: 2px solid #dbeeff; outline-offset: 4px; }
+@media (prefers-reduced-motion: reduce) {
+  #works > header,
+  .portfolio-grid > div {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+  .portfolio-card,
+  .portfolio-card *,
+  .gallery-toolbar *,
+  .portfolio-lightbox * {
+    animation: none !important;
+    transition: none !important;
+  }
+  .portfolio-card .project-frame > img {
+    transform: none !important;
+  }
+}
 .portfolio-card:focus-visible { outline-width: 2px; }
 .glass-button:disabled { opacity: 0.5; cursor: default; }
 @media (min-width: 768px) {

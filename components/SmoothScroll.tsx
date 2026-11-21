@@ -18,7 +18,7 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
       lerp: 0.1,
       smoothWheel: true,
       touchMultiplier: 1.5,
-      respectReducedMotion: false,
+      respectReducedMotion: true,
     });
     setLenis(lenis);
 
@@ -41,6 +41,7 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
       event.preventDefault();
       window.history.pushState(null, "", hash);
       lenis.scrollTo(el, {
+        immediate: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
         offset: 0,
         duration: 1.05,
         easing: (t) => 1 - Math.pow(1 - t, 4),

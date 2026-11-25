@@ -35,6 +35,7 @@ export default function Gallery() {
     () => projects.filter((p) => p.category === active),
     [active]
   );
+  const categoryLabel = categories.find((category) => category.id === active)?.label ?? active;
 
   const open = useCallback((index: number) => setSelected(index), []);
   const close = useCallback(() => setSelected(null), []);
@@ -43,7 +44,12 @@ export default function Gallery() {
   return (
     <>
       <div ref={filterBarRef} className="gallery-toolbar">
-        <p>Curated reel / {String(visible.length).padStart(2, "0")} films</p>
+        <p role="status">
+          <span aria-hidden="true">Curated reel / {String(visible.length).padStart(2, "0")} films</span>
+          <span className="sr-only">
+            {categoryLabel}：{visible.length ? `${visible.length} 个作品` : "暂无作品"}。
+          </span>
+        </p>
         <FilterBar categories={categories} active={active} onChange={setActive} />
       </div>
 
